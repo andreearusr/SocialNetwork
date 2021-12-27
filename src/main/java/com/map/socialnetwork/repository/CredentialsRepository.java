@@ -5,7 +5,7 @@ import com.map.socialnetwork.domain.Credentials;
 import java.sql.*;
 import java.util.Optional;
 
-public class CredentialsRepository extends AbstractRepository{
+public class CredentialsRepository extends AbstractRepository {
     public CredentialsRepository(String url, String username, String password) {
         super(url, username, password);
     }
