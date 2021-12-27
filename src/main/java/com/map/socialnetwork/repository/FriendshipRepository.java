@@ -66,9 +66,9 @@ public class FriendshipRepository extends AbstractRepository {
         List<User> friends = new ArrayList<>();
 
         String sql = """
-                    SELECT first_user, second_user from friendships WHERE (first_user = (?) OR second_user = (?))
-                    AND status='ACCEPTED'
-                    """;
+                SELECT first_user, second_user from friendships WHERE (first_user = (?) OR second_user = (?))
+                AND status='ACCEPTED'
+                """;
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -97,9 +97,9 @@ public class FriendshipRepository extends AbstractRepository {
         List<User> requested = new ArrayList<>();
 
         String sql = """
-                    SELECT first_user from friendships WHERE second_user = (?)
-                    AND status='PENDING'
-                    """;
+                SELECT first_user from friendships WHERE second_user = (?)
+                AND status='PENDING'
+                """;
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -124,9 +124,9 @@ public class FriendshipRepository extends AbstractRepository {
         User secondUSer = userRepository.get(id.second()).orElseThrow(() -> new MissingEntityException("Second id is invalid!"));
 
         String sql = """
-                    SELECT status, date from friendships WHERE first_user = (?)
-                    AND second_user=(?)
-                    """;
+                SELECT status, date from friendships WHERE first_user = (?)
+                AND second_user=(?)
+                """;
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MessageRepository extends AbstractRepository{
+public class MessageRepository extends AbstractRepository {
     UserRepository userRepository;
 
     public MessageRepository(String url, String username, String password, UserRepository userRepository) {
@@ -31,7 +31,7 @@ public class MessageRepository extends AbstractRepository{
             ps1.executeUpdate();
 
             try (ResultSet generatedKeys = ps1.getGeneratedKeys()) {
-                if(generatedKeys.next()) {
+                if (generatedKeys.next()) {
                     ps2.setLong(2, generatedKeys.getLong(1));
                 } else {
                     throw new SQLException("Creation of message failed. Could not obtain the ID!");
@@ -110,8 +110,8 @@ public class MessageRepository extends AbstractRepository{
                 WHERE  message_id=(?)
                 """;
 
-        try(Connection connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, messageId);
             ResultSet resultSet = statement.executeQuery();
 
@@ -135,8 +135,8 @@ public class MessageRepository extends AbstractRepository{
                 ORDER BY m.date
                 """;
 
-        try(Connection connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, firstUser.getId());
             statement.setLong(2, secondUser.getId());
             ResultSet resultSet = statement.executeQuery();

@@ -28,7 +28,7 @@ public class Friendship extends Entity<Tuple<User, User>> {
      *
      * @param id long
      */
-    public Friendship(Tuple<User, User> id,  Timestamp timestamp, Status status) {
+    public Friendship(Tuple<User, User> id, Timestamp timestamp, Status status) {
         super(id);
         this.timestamp = timestamp;
         this.status = status;
