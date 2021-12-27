@@ -6,8 +6,8 @@ module com.map.socialnetwork {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
     requires javafx.graphics;
-    requires lombok;
     requires java.sql;
+    requires lombok;
 
     opens com.map.socialnetwork to javafx.fxml;
     exports com.map.socialnetwork;
