@@ -14,14 +14,14 @@ public class UserRepository extends AbstractRepository {
     }
 
     public void store(User user) {
-        String sql = "insert into users (id, first_name, last_name ) values (?, ?, ?)";
+        String sql = """
+                insert into users(first_name, last_name ) values (?, ?)""";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            ps.setLong(1, user.getId());
-            ps.setString(2, user.getFirstName());
-            ps.setString(3, user.getLastName());
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
 
             ps.executeUpdate();
         } catch (SQLException e) {
