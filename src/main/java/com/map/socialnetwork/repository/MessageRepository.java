@@ -9,8 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class MessageRepository extends AbstractRepository{
-    public MessageRepository(String url, String username, String password) {
+    UserRepository userRepository;
+
+    public MessageRepository(String url, String username, String password, UserRepository userRepository) {
         super(url, username, password);
+        this.userRepository = userRepository;
     }
 
     public void store(Message message) {
@@ -59,12 +62,92 @@ public class MessageRepository extends AbstractRepository{
     }
 
     public Optional<Message> get(Long id) {
-        //TODO WRITE FUNCTION
+        String sql = """
+                SELECT * from messages
+                WHERE  id=(?)""";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            Message message = null;
+
+            if (resultSet.next()) {
+                long messageId = resultSet.getLong("messageid");
+                String body = resultSet.getString("message");
+                Timestamp timestamp = resultSet.getTimestamp("time");
+                long from = resultSet.getLong("from");
+                long replyId = resultSet.getLong("reply");
+
+                Message reply = null;
+
+                if (replyId != 0) {
+                    Optional<Message> replyOp = get(replyId);
+
+                    reply = replyOp.orElse(null);
+                }
+
+                List<User> to = getReceivers(id);
+
+                message = new Message(messageId, body, to, userRepository.get(from).orElse(null),
+                        Timestamp.valueOf(timestamp.toLocalDateTime()), reply);
+            }
+
+            return Optional.ofNullable(message);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return Optional.empty();
     }
 
-    public List<Message> getConversation(User user1, User user2) {
-        //TODO WRITE FUNCTION
-        return new ArrayList<>();
+    private List<User> getReceivers(long messageId) {
+        List<User> receivers = new ArrayList<>();
+
+        String sql = """
+                SELECT user_id from users_messages
+                WHERE  message_id=(?)
+                """;
+
+        try(Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, messageId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                userRepository.get(resultSet.getLong("userid")).ifPresent(receivers::add);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return receivers;
+    }
+
+    public List<Message> getConversation(User firstUser, User secondUser) {
+        List<Message> messages = new ArrayList<>();
+
+        String sql = """
+                SELECT m.id from messages m\040
+                inner join users_messages um on m.id = um.message_id
+                WHERE (m."from"=(?) AND um.user_id=(?)) OR (m."from"=(?) AND um.user_id=(?))
+                ORDER BY m.date
+                """;
+
+        try(Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, firstUser.getId());
+            statement.setLong(2, secondUser.getId());
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                get(resultSet.getLong("id")).ifPresent(messages::add);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return messages;
     }
 }

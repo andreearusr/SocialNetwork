@@ -29,6 +29,15 @@ public class Message extends Entity<Long> {
         this.reply = reply;
     }
 
+    public Message(Long id, String message, List<User> to, User from, Timestamp time, Message reply) {
+        super(id);
+        this.message = message;
+        this.to = to;
+        this.from = from;
+        this.time = time;
+        this.reply = reply;
+    }
+
     public Message(String message, List<User> to, User from, Message reply) {
         super(0L);
         this.message = message;
