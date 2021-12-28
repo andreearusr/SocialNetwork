@@ -10,12 +10,12 @@ public class CredentialsRepository extends AbstractRepository {
         super(url, username, password);
     }
 
-    public Optional<Long> getId(String username) {
+    public Optional<Long> getId(String user) {
         String sql = "SELECT * from credentials WHERE username = (?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, username);
+            statement.setString(1, user);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
