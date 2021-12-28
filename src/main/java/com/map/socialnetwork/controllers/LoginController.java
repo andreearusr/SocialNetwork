@@ -11,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -38,7 +40,8 @@ public class LoginController {
             authentication.logIn(username, password);
             changeScene();
         } catch (AuthenticationException | IOException e) {
-            //TODO PRINT MESSAGE
+            MessageAlert.showErrorMessage(null, e.getMessage());
+            clearFields();
         }
     }
 
@@ -55,14 +58,22 @@ public class LoginController {
     }
 
     private void changeScene() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("afterLogin.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userLogin.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Social Network!");
-        primaryStage.setScene(scene);
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Social Network!");
+        dialogStage.setScene(scene);
 
         UserController userController = fxmlLoader.getController();
-        userController.setService(service);
         userController.setAuthentication(authentication);
-        userController.setStage(primaryStage);
+        userController.setService(service);
+        userController.setStage(dialogStage);
+        dialogStage.show();
+        clearFields();
+    }
+
+    private void clearFields() {
+        inputUsername.setText("");
+        inputPassword.setText("");
     }
 }

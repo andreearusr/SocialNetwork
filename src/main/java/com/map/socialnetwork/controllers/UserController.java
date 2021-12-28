@@ -2,6 +2,7 @@ package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.domain.Credentials;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.collections.FXCollections;
@@ -20,6 +21,7 @@ public class UserController {
     private Authentication authentication;
     private Service service;
     private Stage primaryStage;
+    ObservableList<User> model = FXCollections.observableArrayList();
 
     @FXML
     private TableColumn<User, String> FirstNameColumn;
@@ -42,6 +44,7 @@ public class UserController {
 
     public void setService(Service service) {
         this.service = service;
+        initModel();
     }
 
     public void setAuthentication(Authentication authentication) {
@@ -54,6 +57,22 @@ public class UserController {
 
     @FXML
     public void initialize() {
+        FirstNameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
+        LastNameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("lastName"));
+        IdColumn.setCellValueFactory(new PropertyValueFactory<User, Long>("id"));
+
+        friendsTable.setItems(model);
+    }
+
+    private void initModel() {
+        long userId = authentication.getUserId();
+        User user = service.getUser(userId).get();
+        Iterable<User> friends = service.getFriends(user);
+        List<User> friendsList = StreamSupport.stream(friends.spliterator(), false)
+                .collect(Collectors.toList());
+        model.setAll(friendsList);
+
+        loggedUser.setText(service.getUser(userId).get().toString());
 
     }
 
@@ -75,8 +94,9 @@ public class UserController {
 
 
     @FXML
-    public void handleLogout() {
-
+    public void handleLogout() throws AuthenticationException {
+        primaryStage.close();
+        authentication.logOut();
     }
 
 }
