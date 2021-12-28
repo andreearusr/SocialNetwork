@@ -19,7 +19,7 @@ public class Authentication {
     @Getter
     private Long userId = null;
 
-    public void logIn(String username, String password) throws AuthenticationException {
+    public Long logIn(String username, String password) throws AuthenticationException {
         if (userId != null) {
             throw new AuthenticationException("Already logged in!");
         }
@@ -35,6 +35,8 @@ public class Authentication {
         } else {
             throw new AuthenticationException("Wrong username or password!");
         }
+
+        return id.get();
     }
 
     public void logOut() throws AuthenticationException {

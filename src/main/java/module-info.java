@@ -12,5 +12,10 @@ module com.map.socialnetwork {
     opens com.map.socialnetwork to javafx.fxml;
     exports com.map.socialnetwork;
     exports com.map.socialnetwork.controllers;
+    exports com.map.socialnetwork.service;
+    exports com.map.socialnetwork.repository;
+    exports com.map.socialnetwork.domain;
+    exports com.map.socialnetwork.exceptions;
     opens com.map.socialnetwork.controllers to javafx.fxml;
+    opens com.map.socialnetwork.service to javafx.fxml;
 }
