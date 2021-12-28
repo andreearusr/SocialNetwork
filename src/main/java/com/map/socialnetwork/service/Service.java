@@ -46,6 +46,11 @@ public record Service(UserRepository usersRepository,
         return usersRepository.getAll();
     }
 
+    public Optional<User> getUser(long id) {
+        return usersRepository.get(id);
+    }
+
+
     public void storeNewMessage(String content, List<Long> to, Long from) {
         messageRepository.store(new Message(
                 content,

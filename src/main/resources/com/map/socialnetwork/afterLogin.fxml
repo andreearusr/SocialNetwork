@@ -4,25 +4,25 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.AfterLoginController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="552.0" prefWidth="828.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserController">
    <children>
-      <Label fx:id="loggedUser" layoutX="1725.0" layoutY="14.0" prefHeight="38.0" prefWidth="181.0" text="Username" />
-      <Button fx:id="logoutButton" layoutX="1725.0" layoutY="61.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="181.0" text="Logout" />
-      <TableView fx:id="friendRequestsTable" layoutX="353.0" layoutY="18.0" prefHeight="417.0" prefWidth="1087.0">
+      <Label fx:id="loggedUser" alignment="CENTER" layoutX="25.0" layoutY="37.0" prefHeight="38.0" prefWidth="162.0" text="Username" textFill="#123640">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font></Label>
+      <Button layoutX="37.0" layoutY="96.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="26.0" prefWidth="137.0" text="Logout" />
+      <Button layoutX="274.0" layoutY="397.0" mnemonicParsing="false" onAction="#handleAddFriend" prefHeight="26.0" prefWidth="102.0" text="Add friend" />
+      <Button layoutX="274.0" layoutY="436.0" mnemonicParsing="false" onAction="#handleRemoveFriend" prefHeight="26.0" prefWidth="102.0" text="Remove friend" />
+      <Button layoutX="274.0" layoutY="498.0" mnemonicParsing="false" onAction="#handleFriendRequests" text="Friendship requests" />
+      <TableView fx:id="friendsTable" layoutX="274.0" prefHeight="366.0" prefWidth="556.0">
         <columns>
-          <TableColumn fx:id="fromColumn" prefWidth="270.0" text="From" />
-          <TableColumn fx:id="toColumn" minWidth="0.0" prefWidth="252.0" text="To" />
-            <TableColumn fx:id="statusColumn" minWidth="0.0" prefWidth="186.0" text="STATUS" />
-            <TableColumn fx:id="dateColumn" minWidth="0.0" prefWidth="378.0" text="DATE" />
+          <TableColumn fx:id="FirstNameColumn" prefWidth="185.5999755859375" text="First Name" />
+            <TableColumn fx:id="LastNameColumn" prefWidth="200.0" text="Last Name" />
+            <TableColumn fx:id="IdColumn" prefWidth="200.0" text="Id" />
         </columns>
       </TableView>
-      <TextArea fx:id="messagesBox" layoutX="353.0" layoutY="434.0" prefHeight="559.0" prefWidth="1087.0" />
-      <TextField fx:id="messageForm" layoutX="353.0" layoutY="993.0" prefHeight="38.0" prefWidth="1013.0" promptText="Message" />
-      <Button fx:id="sendMessageButton" layoutX="1366.0" layoutY="993.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="38.0" prefWidth="74.0" text="Button" />
    </children>
 </AnchorPane>

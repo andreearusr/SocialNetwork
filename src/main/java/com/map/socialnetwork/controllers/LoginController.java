@@ -56,13 +56,13 @@ public class LoginController {
 
     private void changeScene() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("afterLogin.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+        Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setTitle("Social Network!");
         primaryStage.setScene(scene);
 
-        AfterLoginController afterLoginController = fxmlLoader.getController();
-        afterLoginController.setService(service);
-        afterLoginController.setAuthentication(authentication);
-        afterLoginController.setStage(primaryStage);
+        UserController userController = fxmlLoader.getController();
+        userController.setService(service);
+        userController.setAuthentication(authentication);
+        userController.setStage(primaryStage);
     }
 }
