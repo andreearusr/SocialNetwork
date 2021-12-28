@@ -41,7 +41,6 @@ public class LoginController {
             changeScene();
         } catch (AuthenticationException | IOException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
-            clearFields();
         }
     }
 
@@ -60,20 +59,13 @@ public class LoginController {
     private void changeScene() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userLogin.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        Stage dialogStage = new Stage();
-        dialogStage.setTitle("Social Network!");
-        dialogStage.setScene(scene);
+        primaryStage.setTitle("Social Network!");
+        primaryStage.setScene(scene);
 
         UserController userController = fxmlLoader.getController();
         userController.setAuthentication(authentication);
         userController.setService(service);
-        userController.setStage(dialogStage);
-        dialogStage.show();
-        clearFields();
+        userController.setStage(primaryStage);
     }
 
-    private void clearFields() {
-        inputUsername.setText("");
-        inputPassword.setText("");
-    }
 }
