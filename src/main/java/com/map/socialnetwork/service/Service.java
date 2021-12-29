@@ -184,8 +184,8 @@ public record Service(UserRepository usersRepository,
         friendshipsRepository.update(friendship.get());
     }
 
-    public List<User> getRejected(User user) {
-        return friendshipsRepository.getRejected(user);
+    public List<User> getUnrelatedUsers(User user) {
+        return friendshipsRepository.getUnrelatedUsers(user);
     }
 
     public void setFriendshipStatus(long firstUserId, long secondUserId, Friendship.Status newStatus) throws MissingEntityException {
