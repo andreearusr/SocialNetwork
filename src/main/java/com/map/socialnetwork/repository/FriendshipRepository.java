@@ -3,6 +3,7 @@ package com.map.socialnetwork.repository;
 import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.Tuple;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 
 import java.sql.*;
@@ -18,7 +19,14 @@ public class FriendshipRepository extends AbstractRepository {
         this.userRepository = userRepository;
     }
 
-    public void store(Friendship friendship) {
+    public void store(Friendship friendship) throws MissingEntityException, DuplicateEntityException {
+        Tuple<Long, Long> ids = new Tuple<>(friendship.getId().first().getId(), friendship.getId().second().getId());
+        Tuple<Long, Long> ids_swapped = new Tuple<>(friendship.getId().second().getId(), friendship.getId().first().getId());
+
+        if (getFriendship(ids).isPresent() || getFriendship(ids_swapped).isPresent()) {
+            throw new DuplicateEntityException("Could not send friend request to this user!");
+        }
+
         String sql = "insert into friendships (first_user, second_user, date, status) values (?, ?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
@@ -147,4 +155,36 @@ public class FriendshipRepository extends AbstractRepository {
 
         return Optional.ofNullable(friendship);
     }
+
+    public List<User> getUnrelatedUsers(User user) {
+        List<User> unrelatedUsers = new ArrayList<>();
+
+        String sql = """
+                SELECT u.id from users u
+                WHERE (SELECT COUNT(*) FROM (
+                        SELECT * from friendships as f
+                        where (f.first_user=(?) AND f.second_user=u.id) OR (f.first_user=u.id AND f.second_user=(?))
+                ) as unrelated) = 0 AND u.id != (?)
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, user.getId());
+            ps.setLong(2, user.getId());
+            ps.setLong(3, user.getId());
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                long userId = resultSet.getLong(1);
+
+                    userRepository.get(userId).ifPresent(unrelatedUsers::add);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return unrelatedUsers;
+    }
+
+
 }

@@ -4,60 +4,76 @@ import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.Tuple;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.repository.FriendshipRepository;
 import com.map.socialnetwork.repository.MessageRepository;
 import com.map.socialnetwork.repository.UserRepository;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.Observable;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public record Service(UserRepository usersRepository,
-                      FriendshipRepository friendshipsRepository,
-                      MessageRepository messageRepository) {
+@AllArgsConstructor
+public class Service extends Observable {
+
+    private UserRepository userRepository;
+    private FriendshipRepository friendshipRepository;
+    private MessageRepository messageRepository;
 
     public void addUser(String firstName, String lastName) {
-        usersRepository.store(new User(firstName, lastName));
+        userRepository.store(new User(firstName, lastName));
+        notifyObservers();
     }
 
     public void deleteUser(long id) throws MissingEntityException {
-        Optional<User> userToDelete = usersRepository.get(id);
+        Optional<User> userToDelete = userRepository.get(id);
 
         if (userToDelete.isPresent()) {
-            usersRepository.delete(userToDelete.get());
-            friendshipsRepository.deleteFriendshipsRelatedToUser(userToDelete.get());
+            userRepository.delete(userToDelete.get());
+            friendshipRepository.deleteFriendshipsRelatedToUser(userToDelete.get());
         } else {
             throw new MissingEntityException("User doesn't exist!");
         }
+
+        setChanged();
+        notifyObservers();
     }
 
     public void updateUser(long id, String newFirstName, String newSecondName) throws MissingEntityException {
-        Optional<User> userToRemove = usersRepository.get(id);
+        Optional<User> userToRemove = userRepository.get(id);
 
         if (userToRemove.isPresent()) {
-            usersRepository.update(id, new User(newFirstName, newSecondName));
+            userRepository.update(id, new User(newFirstName, newSecondName));
         } else {
             throw new MissingEntityException("User doesn't exist!");
         }
+
+        setChanged();
+        notifyObservers();
     }
 
     public List<User> getUsers() {
-        return usersRepository.getAll();
+        return userRepository.getAll();
     }
 
     public Optional<User> getUser(long id) {
-        return usersRepository.get(id);
+        return userRepository.get(id);
     }
 
 
     public void storeNewMessage(String content, List<Long> to, Long from) {
         messageRepository.store(new Message(
                 content,
-                to.stream().map(usersRepository::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()),
-                usersRepository.get(from).orElse(User.deletedUser),
+                to.stream().map(userRepository::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()),
+                userRepository.get(from).orElse(User.deletedUser),
                 null
         ));
+
+        setChanged();
+        notifyObservers();
     }
 
     public void replyMessage(String content, Long from, Long replyId) throws MissingEntityException {
@@ -66,13 +82,16 @@ public record Service(UserRepository usersRepository,
         if (message.isPresent()) {
             messageRepository.store(new Message(
                     content,
-                    message.get().getTo().stream().filter(user -> usersRepository.get(user.getId()).isPresent()).collect(Collectors.toList()),
-                    usersRepository.get(from).orElse(User.deletedUser),
+                    message.get().getTo().stream().filter(user -> userRepository.get(user.getId()).isPresent()).collect(Collectors.toList()),
+                    userRepository.get(from).orElse(User.deletedUser),
                     message.get()
             ));
         } else {
             throw new MissingEntityException("Reply message doesn't exist!");
         }
+
+        setChanged();
+        notifyObservers();
     }
 
     public void replyAllMessage(String content, Long from, Long replyId) throws MissingEntityException {
@@ -82,16 +101,19 @@ public record Service(UserRepository usersRepository,
             List<User> to = message.get().getTo();
             to.add(message.get().getFrom());
 
-            to = to.stream().filter(user -> usersRepository.get(user.getId()).isPresent()).collect(Collectors.toList());
+            to = to.stream().filter(user -> userRepository.get(user.getId()).isPresent()).collect(Collectors.toList());
             messageRepository.store(new Message(
                     content,
                     to,
-                    usersRepository.get(from).orElse(User.deletedUser),
+                    userRepository.get(from).orElse(User.deletedUser),
                     message.get()
             ));
         } else {
             throw new MissingEntityException("Reply message doesn't exist!");
         }
+
+        setChanged();
+        notifyObservers();
     }
 
     public void deleteMessage(Long id) throws MissingEntityException {
@@ -102,11 +124,14 @@ public record Service(UserRepository usersRepository,
         } else {
             throw new MissingEntityException("Message doesn't exist!");
         }
+
+        setChanged();
+        notifyObservers();
     }
 
     public List<Message> getConversation(Long firstUserId, Long secondUserId) throws MissingEntityException {
-        User firstUser = usersRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = usersRepository.get(secondUserId).orElse(User.deletedUser);
+        User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
+        User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
 
         if (firstUser == User.deletedUser) {
             throw new MissingEntityException("First user is missing!");
@@ -119,9 +144,9 @@ public record Service(UserRepository usersRepository,
         return messageRepository.getConversation(firstUser, secondUser);
     }
 
-    public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException {
-        User firstUser = usersRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = usersRepository.get(secondUserId).orElse(User.deletedUser);
+    public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException {
+        User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
+        User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
 
         if (firstUser == User.deletedUser) {
             throw new MissingEntityException("First user is missing!");
@@ -131,16 +156,14 @@ public record Service(UserRepository usersRepository,
             throw new MissingEntityException("Second user is missing!");
         }
 
-        Optional<Friendship> friendship = friendshipsRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
-
-        if (friendship.isEmpty()) {
-            friendshipsRepository.store(new Friendship(firstUser, secondUser));
-        }
+        friendshipRepository.store(new Friendship(firstUser, secondUser));
+        setChanged();
+        notifyObservers();
     }
 
     public void respondFriendshipRequest(Long firstUserId, Long secondUserId, Friendship.Status newStatus) throws MissingEntityException {
-        User firstUser = usersRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = usersRepository.get(secondUserId).orElse(User.deletedUser);
+        User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
+        User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
 
         if (firstUser == User.deletedUser) {
             throw new MissingEntityException("First user is missing!");
@@ -150,21 +173,56 @@ public record Service(UserRepository usersRepository,
             throw new MissingEntityException("Second user is missing!");
         }
 
-        Optional<Friendship> friendship = friendshipsRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
+        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
 
         if (friendship.isPresent()) {
             Friendship updatedFriendship = friendship.get();
             updatedFriendship.respond(secondUser, newStatus);
-            friendshipsRepository.update(updatedFriendship);
+            friendshipRepository.update(updatedFriendship);
         }
+
+        setChanged();
+        notifyObservers();
     }
 
     public List<User> getFriends(User user) {
-        return friendshipsRepository.getFriends(user);
+        return friendshipRepository.getFriends(user);
     }
 
     public List<User> getRequested(User user) {
-        return friendshipsRepository.getRequested(user);
+        return friendshipRepository.getRequested(user);
+    }
+
+    public void removeFriendship(long firstUserId, long secondUserId) throws MissingEntityException {
+        if (firstUserId > secondUserId) {
+            long aux = firstUserId;
+            firstUserId = secondUserId;
+            secondUserId = aux;
+        }
+        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
+        friendship.get().setStatus(Friendship.Status.REJECTED);
+        friendshipRepository.update(friendship.get());
+        setChanged();
+        notifyObservers();
+    }
+
+    public List<User> getUnrelatedUsers(User user) {
+        return friendshipRepository.getUnrelatedUsers(user);
+    }
+
+    public void setFriendshipStatus(long firstUserId, long secondUserId, Friendship.Status newStatus) throws MissingEntityException {
+        if (firstUserId > secondUserId) {
+            long aux = firstUserId;
+            firstUserId = secondUserId;
+            secondUserId = aux;
+        }
+
+        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
+        friendship.get().setStatus(newStatus);
+        friendshipRepository.update(friendship.get());
+
+        setChanged();
+        notifyObservers();
     }
 }
 

@@ -2,6 +2,7 @@ package com.map.socialnetwork.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @Getter
+@Setter
 public class Friendship extends Entity<Tuple<User, User>> {
     public enum Status {
         PENDING,
