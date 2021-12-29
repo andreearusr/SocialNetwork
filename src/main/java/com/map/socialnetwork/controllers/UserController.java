@@ -101,7 +101,7 @@ public class UserController implements Observer {
         long id1 = authentication.getUserId();
         long id2 = friendsTable.getSelectionModel().getSelectedItem().getId();
         service.removeFriendship(id1, id2);
-        initModel();
+
     }
 
     @FXML
