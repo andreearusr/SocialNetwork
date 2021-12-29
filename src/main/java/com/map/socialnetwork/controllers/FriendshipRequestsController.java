@@ -15,8 +15,10 @@ import javafx.stage.Stage;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class FriendshipRequestsController {
+public class FriendshipRequestsController implements Observer {
 
     Service service;
     Authentication authentication;
@@ -42,6 +44,7 @@ public class FriendshipRequestsController {
 
     public void setService(Service service) {
         this.service = service;
+        this.service.addObserver(this);
         this.userId = authentication.getUserId();
         initModel();
     }
@@ -67,6 +70,11 @@ public class FriendshipRequestsController {
     private void initModel() {
         List<Friendship> friendships = service.getAllFriendshipRequests(userId);
         model.setAll(friendships);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
     }
 
 }
