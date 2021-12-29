@@ -194,14 +194,18 @@ public class Service extends Observable {
     }
 
     public void removeFriendship(long firstUserId, long secondUserId) throws MissingEntityException {
-        if (firstUserId > secondUserId) {
-            long aux = firstUserId;
-            firstUserId = secondUserId;
-            secondUserId = aux;
-        }
         Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
-        friendship.get().setStatus(Friendship.Status.REJECTED);
-        friendshipRepository.update(friendship.get());
+        Optional<Friendship> friendshipSwap = friendshipRepository.getFriendship(new Tuple<>(secondUserId, firstUserId));
+
+        if (friendship.isPresent()) {
+            friendship.get().setStatus(Friendship.Status.REJECTED);
+            friendshipRepository.update(friendship.get());
+        }
+        else if (friendshipSwap.isPresent()) {
+            friendshipSwap.get().setStatus(Friendship.Status.REJECTED);
+            friendshipRepository.update(friendshipSwap.get());
+        }
+
         setChanged();
         notifyObservers();
     }
