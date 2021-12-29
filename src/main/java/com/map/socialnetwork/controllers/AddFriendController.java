@@ -1,9 +1,7 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
-import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.User;
-import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.collections.FXCollections;
@@ -11,7 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,10 +16,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.Observable;
+import java.util.Observer;
 
-public class AddFriendController {
+public class AddFriendController implements Observer {
 
     private Service service;
     private Authentication authentication;
@@ -47,6 +44,7 @@ public class AddFriendController {
     public void setService(Service service) {
         this.service = service;
         this.userId = authentication.getUserId();
+        this.service.addObserver(this);
         initModel();
     }
 
@@ -100,5 +98,8 @@ public class AddFriendController {
         userController.setStage(primaryStage);
     }
 
-
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
+    }
 }

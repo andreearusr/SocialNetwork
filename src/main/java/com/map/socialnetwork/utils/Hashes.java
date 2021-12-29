@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class Hashes {
     public static String MD5(String text) {
-        System.out.println(text);
         return text;
 //        String hash = text;
 //        try {
