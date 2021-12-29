@@ -4,6 +4,7 @@ import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.Tuple;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.repository.FriendshipRepository;
 import com.map.socialnetwork.repository.MessageRepository;
@@ -119,7 +120,7 @@ public record Service(UserRepository usersRepository,
         return messageRepository.getConversation(firstUser, secondUser);
     }
 
-    public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException {
+    public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException {
         if (firstUserId > secondUserId) {
             long aux = firstUserId;
             firstUserId = secondUserId;
