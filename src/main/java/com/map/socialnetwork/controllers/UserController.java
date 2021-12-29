@@ -29,6 +29,8 @@ public class UserController implements Observer {
     private Authentication authentication;
     private Service service;
     private Stage primaryStage;
+
+    private long userId;
     ObservableList<User> model = FXCollections.observableArrayList();
 
     @FXML
@@ -53,8 +55,9 @@ public class UserController implements Observer {
     public void setService(Service service) {
         this.service = service;
         this.service.addObserver(this);
+        this.userId = authentication.getUserId();
         initModel();
-        loggedUser.setText(service.getUser(authentication.getUserId()).get().toString());
+        loggedUser.setText(service.getUser(userId).get().toString());
     }
 
     public void setAuthentication(Authentication authentication) {
@@ -75,7 +78,6 @@ public class UserController implements Observer {
     }
 
     private void initModel() {
-        long userId = authentication.getUserId();
         User user = service.getUser(userId).get();
         Iterable<User> friends = service.getFriends(user);
         List<User> friendsList = StreamSupport.stream(friends.spliterator(), false)
@@ -109,7 +111,6 @@ public class UserController implements Observer {
     public void handleFriendRequests() {
 
     }
-
 
     @FXML
     public void handleLogout() throws AuthenticationException, IOException {

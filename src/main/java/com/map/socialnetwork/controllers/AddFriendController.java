@@ -82,6 +82,7 @@ public class AddFriendController implements Observer {
             MessageAlert.showErrorMessage(null, e.getMessage());
         }
 
+        initModel();
     }
 
     @FXML
