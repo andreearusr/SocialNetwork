@@ -2,6 +2,7 @@ package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
 import com.map.socialnetwork.domain.Credentials;
+import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
@@ -26,6 +27,8 @@ public class UserController {
     private Authentication authentication;
     private Service service;
     private Stage primaryStage;
+
+    private long userId;
     ObservableList<User> model = FXCollections.observableArrayList();
 
     @FXML
@@ -49,8 +52,9 @@ public class UserController {
 
     public void setService(Service service) {
         this.service = service;
+        this.userId = authentication.getUserId();
         initModel();
-        loggedUser.setText(service.getUser(authentication.getUserId()).get().toString());
+        loggedUser.setText(service.getUser(userId).get().toString());
     }
 
     public void setAuthentication(Authentication authentication) {
@@ -71,7 +75,6 @@ public class UserController {
     }
 
     private void initModel() {
-        long userId = authentication.getUserId();
         User user = service.getUser(userId).get();
         Iterable<User> friends = service.getFriends(user);
         List<User> friendsList = StreamSupport.stream(friends.spliterator(), false)
@@ -96,9 +99,8 @@ public class UserController {
 
     @FXML
     public void handleRemoveFriend() throws MissingEntityException {
-        long id1 = authentication.getUserId();
-        long id2 = friendsTable.getSelectionModel().getSelectedItem().getId();
-        service.removeFriendship(id1, id2);
+        User user = friendsTable.getSelectionModel().getSelectedItem();
+        service.setFriendshipStatus(userId, user.getId(), Friendship.Status.REJECTED);
         initModel();
     }
 
