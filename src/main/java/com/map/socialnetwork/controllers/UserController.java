@@ -54,6 +54,7 @@ public class UserController implements Observer {
 
     public void setService(Service service) {
         this.service = service;
+        this.service.addObserver(this);
         this.userId = authentication.getUserId();
         initModel();
         loggedUser.setText(service.getUser(userId).get().toString());
@@ -100,9 +101,9 @@ public class UserController implements Observer {
 
     @FXML
     public void handleRemoveFriend() throws MissingEntityException {
-        long id1 = authentication.getUserId();
-        long id2 = friendsTable.getSelectionModel().getSelectedItem().getId();
-        service.removeFriendship(id1, id2);
+        long firstUserid = authentication.getUserId();
+        long secondUserid = friendsTable.getSelectionModel().getSelectedItem().getId();
+        service.removeFriendship(firstUserid, secondUserid);
 
     }
 
