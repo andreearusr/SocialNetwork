@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="436.0" prefWidth="618.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.FriendshipRequestsController">
+   <children>
+      <TableView fx:id="tableRequests" layoutX="20.0" layoutY="14.0" prefHeight="290.0" prefWidth="578.0">
+        <columns>
+          <TableColumn fx:id="FromColumn" prefWidth="117.5999755859375" text="From" />
+          <TableColumn fx:id="ToColumn" prefWidth="148.80003356933594" text="To" />
+            <TableColumn fx:id="StatusColumn" prefWidth="142.39996337890625" text="Status" />
+            <TableColumn fx:id="DateColumn" prefWidth="175.199951171875" text="Date" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

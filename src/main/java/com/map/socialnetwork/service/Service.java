@@ -228,5 +228,9 @@ public class Service extends Observable {
         setChanged();
         notifyObservers();
     }
+
+    public List<Friendship> getAllFriendshipRequests(long id){
+        return friendshipRepository.getAll(id);
+    }
 }
 

@@ -108,7 +108,22 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void handleFriendRequests() {
+    public void handleFriendRequests() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("friendReq.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+
+        Stage dialogStage = new Stage();
+
+        dialogStage.setTitle("Friendship requests");
+        dialogStage.setScene(scene);
+        dialogStage.setResizable(false);
+
+        FriendshipRequestsController friendshipRequestsController = fxmlLoader.getController();
+        friendshipRequestsController.setAuthentication(authentication);
+        friendshipRequestsController.setService(service);
+        friendshipRequestsController.setStage(dialogStage);
+
+        dialogStage.show();
 
     }
 

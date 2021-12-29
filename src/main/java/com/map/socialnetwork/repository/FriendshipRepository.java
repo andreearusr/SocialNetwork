@@ -177,7 +177,7 @@ public class FriendshipRepository extends AbstractRepository {
             while (resultSet.next()) {
                 long userId = resultSet.getLong(1);
 
-                    userRepository.get(userId).ifPresent(unrelatedUsers::add);
+                userRepository.get(userId).ifPresent(unrelatedUsers::add);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -186,5 +186,33 @@ public class FriendshipRepository extends AbstractRepository {
         return unrelatedUsers;
     }
 
+    public List<Friendship> getAll(long id) {
+        List<Friendship> friendships = new ArrayList<>();
+
+        String sql = """
+                SELECT * from friendships WHERE (first_user = (?) OR second_user = (?))
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            ps.setLong(2, id);
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                Long id1 = resultSet.getLong("first_user");
+                Long id2 = resultSet.getLong("second_user");
+                Friendship.Status status = Friendship.Status.valueOf(resultSet.getString("status").strip());
+                Timestamp date = resultSet.getTimestamp("date");
+                Friendship fr = new Friendship(new Tuple<User, User>(userRepository.get(id1).get(), userRepository.get(id2).get()), date, status);
+
+                friendships.add(fr);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return friendships;
+    }
 
 }
