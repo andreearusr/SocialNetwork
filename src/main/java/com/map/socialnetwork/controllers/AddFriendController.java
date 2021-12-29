@@ -24,12 +24,12 @@ import java.util.stream.StreamSupport;
 
 public class AddFriendController {
 
-    Service service;
-    Authentication authentication;
-    Stage primaryStage;
+    private Service service;
+    private Authentication authentication;
+    private Stage primaryStage;
 
     private long userId;
-    ObservableList<User> model = FXCollections.observableArrayList();
+    private final ObservableList<User> model = FXCollections.observableArrayList();
 
     @FXML
     private TableColumn<User, String> FirstNameColumn;
@@ -60,25 +60,30 @@ public class AddFriendController {
 
     @FXML
     public void initialize() {
-        FirstNameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
-        LastNameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("lastName"));
-        IdColumn.setCellValueFactory(new PropertyValueFactory<User, Long>("id"));
+        FirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        LastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        IdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         tableUsers.setItems(model);
     }
 
     private void initModel() {
         User user = service.getUser(userId).get();
-        Iterable<User> friends = service.getRejected(user);
-        List<User> friendsList = StreamSupport.stream(friends.spliterator(), false)
-                .collect(Collectors.toList());
-        model.setAll(friendsList);
+        List<User> friends = service.getUnrelatedUsers(user);
+
+        model.setAll(friends);
     }
 
     @FXML
-    public void handleAddFriend() throws MissingEntityException {
+    public void handleAddFriend() {
         User user = tableUsers.getSelectionModel().getSelectedItem();
-        service.setFriendshipStatus(userId, user.getId(), Friendship.Status.ACCEPTED);
+
+        try {
+            service.sendFriendRequest(userId, user.getId());
+        } catch (Exception e) {
+            MessageAlert.showErrorMessage(null, e.getMessage());
+        }
+
         initModel();
     }
 

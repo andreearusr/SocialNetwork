@@ -148,12 +148,15 @@ public class FriendshipRepository extends AbstractRepository {
         return Optional.ofNullable(friendship);
     }
 
-    public List<User> getRejected(User user) {
-        List<User> rejected = new ArrayList<>();
+    public List<User> getUnrelatedUsers(User user) {
+        List<User> unrelatedUsers = new ArrayList<>();
 
         String sql = """
-                SELECT first_user, second_user from friendships WHERE (first_user = (?) OR second_user = (?))
-                AND status='REJECTED'
+                SELECT u.id from users u
+                WHERE (SELECT COUNT(*) FROM (
+                        SELECT * from friendships as f
+                        where (f.first_user=(?) AND f.second_user=u.id) OR (f.first_user=u.id AND f.second_user=(?))
+                ) as unrelated) = 0
                 """;
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
@@ -163,20 +166,15 @@ public class FriendshipRepository extends AbstractRepository {
             ResultSet resultSet = ps.executeQuery();
 
             while (resultSet.next()) {
-                long firstUserId = resultSet.getLong(1);
-                long secondUserId = resultSet.getLong(2);
+                long userId = resultSet.getLong(1);
 
-                if (firstUserId != user.getId()) {
-                    userRepository.get(firstUserId).ifPresent(rejected::add);
-                } else {
-                    userRepository.get(secondUserId).ifPresent(rejected::add);
-                }
+                    userRepository.get(userId).ifPresent(unrelatedUsers::add);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return rejected;
+        return unrelatedUsers;
     }
 
 
