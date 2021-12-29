@@ -183,5 +183,20 @@ public record Service(UserRepository usersRepository,
         friendship.get().setStatus(Friendship.Status.REJECTED);
         friendshipsRepository.update(friendship.get());
     }
+
+    public List<User> getRejected(User user) {
+        return friendshipsRepository.getRejected(user);
+    }
+
+    public void setFriendshipStatus(long firstUserId, long secondUserId, Friendship.Status newStatus) throws MissingEntityException {
+        if (firstUserId > secondUserId) {
+            long aux = firstUserId;
+            firstUserId = secondUserId;
+            secondUserId = aux;
+        }
+        Optional<Friendship> friendship = friendshipsRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
+        friendship.get().setStatus(newStatus);
+        friendshipsRepository.update(friendship.get());
+    }
 }
 
