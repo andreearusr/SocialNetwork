@@ -121,12 +121,6 @@ public record Service(UserRepository usersRepository,
     }
 
     public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException {
-        if (firstUserId > secondUserId) {
-            long aux = firstUserId;
-            firstUserId = secondUserId;
-            secondUserId = aux;
-        }
-
         User firstUser = usersRepository.get(firstUserId).orElse(User.deletedUser);
         User secondUser = usersRepository.get(secondUserId).orElse(User.deletedUser);
 
