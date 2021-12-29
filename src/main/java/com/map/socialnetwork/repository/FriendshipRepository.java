@@ -164,13 +164,14 @@ public class FriendshipRepository extends AbstractRepository {
                 WHERE (SELECT COUNT(*) FROM (
                         SELECT * from friendships as f
                         where (f.first_user=(?) AND f.second_user=u.id) OR (f.first_user=u.id AND f.second_user=(?))
-                ) as unrelated) = 0
+                ) as unrelated) = 0 AND u.id != (?)
                 """;
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, user.getId());
             ps.setLong(2, user.getId());
+            ps.setLong(3, user.getId());
             ResultSet resultSet = ps.executeQuery();
 
             while (resultSet.next()) {
