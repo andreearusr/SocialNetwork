@@ -4,6 +4,7 @@ import com.map.socialnetwork.Main;
 import com.map.socialnetwork.domain.Credentials;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.AuthenticationException;
+import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.collections.FXCollections;
@@ -86,8 +87,11 @@ public class UserController {
     }
 
     @FXML
-    public void handleRemoveFriend() {
-
+    public void handleRemoveFriend() throws MissingEntityException {
+        long id1 = authentication.getUserId();
+        long id2 = friendsTable.getSelectionModel().getSelectedItem().getId();
+        service.removeFriendship(id1, id2);
+        initModel();
     }
 
     @FXML

@@ -120,6 +120,12 @@ public record Service(UserRepository usersRepository,
     }
 
     public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException {
+        if (firstUserId > secondUserId) {
+            long aux = firstUserId;
+            firstUserId = secondUserId;
+            secondUserId = aux;
+        }
+
         User firstUser = usersRepository.get(firstUserId).orElse(User.deletedUser);
         User secondUser = usersRepository.get(secondUserId).orElse(User.deletedUser);
 
@@ -165,6 +171,17 @@ public record Service(UserRepository usersRepository,
 
     public List<User> getRequested(User user) {
         return friendshipsRepository.getRequested(user);
+    }
+
+    public void removeFriendship(long firstUserId, long secondUserId) throws MissingEntityException {
+        if (firstUserId > secondUserId) {
+            long aux = firstUserId;
+            firstUserId = secondUserId;
+            secondUserId = aux;
+        }
+        Optional<Friendship> friendship = friendshipsRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
+        friendship.get().setStatus(Friendship.Status.REJECTED);
+        friendshipsRepository.update(friendship.get());
     }
 }
 
