@@ -147,4 +147,37 @@ public class FriendshipRepository extends AbstractRepository {
 
         return Optional.ofNullable(friendship);
     }
+
+    public List<User> getRejected(User user) {
+        List<User> rejected = new ArrayList<>();
+
+        String sql = """
+                SELECT first_user, second_user from friendships WHERE (first_user = (?) OR second_user = (?))
+                AND status='REJECTED'
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, user.getId());
+            ps.setLong(2, user.getId());
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                long firstUserId = resultSet.getLong(1);
+                long secondUserId = resultSet.getLong(2);
+
+                if (firstUserId != user.getId()) {
+                    userRepository.get(firstUserId).ifPresent(rejected::add);
+                } else {
+                    userRepository.get(secondUserId).ifPresent(rejected::add);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return rejected;
+    }
+
+
 }
