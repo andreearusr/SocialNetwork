@@ -111,7 +111,6 @@ public class UserController implements Observer {
 
     }
 
-
     @FXML
     public void handleLogout() throws AuthenticationException, IOException {
         authentication.logOut();
