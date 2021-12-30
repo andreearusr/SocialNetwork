@@ -40,9 +40,6 @@ public class UserController implements Observer {
     private TableColumn<User, String> LastNameColumn;
 
     @FXML
-    private TableColumn<User, Long> IdColumn;
-
-    @FXML
     private TableView<User> friendsTable;
 
     @FXML
@@ -72,7 +69,6 @@ public class UserController implements Observer {
     public void initialize() {
         FirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         LastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        IdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         friendsTable.setItems(model);
     }

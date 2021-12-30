@@ -19,9 +19,8 @@
       <Button layoutX="536.0" layoutY="398.0" mnemonicParsing="false" onAction="#handleFriendRequests" prefHeight="24.0" prefWidth="262.0" text="Friendship requests" />
       <TableView fx:id="friendsTable" layoutX="274.0" prefHeight="366.0" prefWidth="556.0">
         <columns>
-          <TableColumn fx:id="IdColumn" prefWidth="185.5999755859375" text="Id" />
-            <TableColumn fx:id="FirstNameColumn" prefWidth="200.0" text="First Name" />
-            <TableColumn fx:id="LastNameColumn" prefWidth="200.0" text="Last Name" />
+            <TableColumn fx:id="FirstNameColumn" prefWidth="266.0" text="First Name" />
+            <TableColumn fx:id="LastNameColumn" prefWidth="288.0" text="Last Name" />
         </columns>
       </TableView>
       <Button layoutX="536.0" layoutY="437.0" mnemonicParsing="false" onAction="#respondToFriendRequest" prefHeight="24.0" prefWidth="262.0" text="Respond to friend request" />
