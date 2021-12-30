@@ -101,10 +101,13 @@ public class UserController implements Observer {
 
     @FXML
     public void handleRemoveFriend() throws MissingEntityException {
-        long firstUserid = authentication.getUserId();
-        long secondUserid = friendsTable.getSelectionModel().getSelectedItem().getId();
-        service.removeFriendship(firstUserid, secondUserid);
-
+        try {
+            long firstUserid = authentication.getUserId();
+            long secondUserid = friendsTable.getSelectionModel().getSelectedItem().getId();
+            service.removeFriendship(firstUserid, secondUserid);
+        } catch (NullPointerException nullPointerException) {
+            MessageAlert.showErrorMessage(null, "Please select a user first!");
+        }
     }
 
     @FXML
