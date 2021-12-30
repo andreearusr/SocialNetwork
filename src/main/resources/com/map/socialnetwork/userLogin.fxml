@@ -23,6 +23,7 @@
             <TableColumn fx:id="LastNameColumn" prefWidth="288.0" text="Last Name" />
         </columns>
       </TableView>
-      <Button layoutX="536.0" layoutY="437.0" mnemonicParsing="false" onAction="#respondToFriendRequest" prefHeight="24.0" prefWidth="262.0" text="Respond to friend request" />
+      <Button layoutX="536.0" layoutY="437.0" mnemonicParsing="false" onAction="#handleRespondToFriendRequest" prefHeight="24.0" prefWidth="262.0" text="Respond to friend request" />
+      <Button layoutX="267.0" layoutY="475.0" mnemonicParsing="false" onAction="#handleRetractFriendRequest" prefHeight="26.0" prefWidth="262.0" text="Retract friend request" />
    </children>
 </AnchorPane>

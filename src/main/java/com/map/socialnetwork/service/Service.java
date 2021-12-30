@@ -225,6 +225,27 @@ public class Service extends Observable {
         setChanged();
         notifyObservers();
     }
+    
+    public void retractRequest(User firstUser, User secondUser) throws MissingEntityException, InvalidRequestException {
+        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUser.getId(), secondUser.getId()));
+
+        if (friendship.isEmpty()) {
+            throw new MissingEntityException("Request doesn't exist!");
+        }
+        
+        if(friendship.get().getStatus() != Friendship.Status.PENDING) {
+            throw new InvalidRequestException("Can not retract this request!");
+        }
+        
+        friendshipRepository.deleteFriendship(friendship.get());
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public List<Friendship> getSentPendingRequests(User user) {
+        return friendshipRepository.getSentPendingRequests(user);
+    }
 
     public List<Friendship> getAllFriendshipRequests(long id){
         return friendshipRepository.getAll(id);
