@@ -74,9 +74,9 @@ public class MessageRepository extends AbstractRepository {
             Message message = null;
 
             if (resultSet.next()) {
-                long messageId = resultSet.getLong("messageid");
-                String body = resultSet.getString("message");
-                Timestamp timestamp = resultSet.getTimestamp("time");
+                long messageId = resultSet.getLong("id");
+                String body = resultSet.getString("body");
+                Timestamp timestamp = resultSet.getTimestamp("date");
                 long from = resultSet.getLong("from");
                 long replyId = resultSet.getLong("reply");
 
@@ -116,7 +116,7 @@ public class MessageRepository extends AbstractRepository {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                userRepository.get(resultSet.getLong("userid")).ifPresent(receivers::add);
+                userRepository.get(resultSet.getLong("user_id")).ifPresent(receivers::add);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -139,6 +139,8 @@ public class MessageRepository extends AbstractRepository {
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, firstUser.getId());
             statement.setLong(2, secondUser.getId());
+            statement.setLong(3, secondUser.getId());
+            statement.setLong(4, firstUser.getId());
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {

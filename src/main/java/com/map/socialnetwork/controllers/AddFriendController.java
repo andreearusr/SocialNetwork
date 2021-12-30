@@ -43,13 +43,13 @@ public class AddFriendController implements Observer {
 
     public void setService(Service service) {
         this.service = service;
-        this.userId = authentication.getUserId();
         this.service.addObserver(this);
         initModel();
     }
 
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
+        this.userId = authentication.getUserId();
     }
 
     public void setStage(Stage primaryStage) {
