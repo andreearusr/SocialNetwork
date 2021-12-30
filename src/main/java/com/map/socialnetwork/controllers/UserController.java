@@ -45,19 +45,16 @@ public class UserController implements Observer {
     @FXML
     private Label loggedUser;
 
-    public UserController() {
-    }
-
     public void setService(Service service) {
         this.service = service;
         this.service.addObserver(this);
-        this.userId = authentication.getUserId();
         initModel();
         loggedUser.setText(service.getUser(userId).get().toString());
     }
 
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
+        this.userId = authentication.getUserId();
     }
 
     public void setStage(Stage primaryStage) {
@@ -163,6 +160,32 @@ public class UserController implements Observer {
         RetractRequestController retractRequestController = fxmlLoader.getController();
         retractRequestController.setAuthentication(authentication);
         retractRequestController.setService(service);
+    }
+
+    @FXML
+    private void handleConversations() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("conversations.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+
+        ConversationsController conversationsController = fxmlLoader.getController();
+        conversationsController.setAuthentication(authentication);
+        conversationsController.setService(service);
+    }
+
+    @FXML
+    private void handleSendMessage() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("messageSender.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+
+        MessageSenderController messageSenderController = fxmlLoader.getController();
+        messageSenderController.setAuthentication(authentication);
+        messageSenderController.setService(service);
     }
 
     @Override

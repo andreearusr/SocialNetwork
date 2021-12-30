@@ -65,7 +65,7 @@ public class Service extends Observable {
     }
 
 
-    public void storeNewMessage(String content, List<Long> to, Long from) {
+    public void sendSingleMessage(String content, List<Long> to, Long from) {
         messageRepository.store(new Message(
                 content,
                 to.stream().map(userRepository::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()),
@@ -74,16 +74,16 @@ public class Service extends Observable {
         ));
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Message.class);
     }
 
-    public void replyMessage(String content, Long from, Long replyId) throws MissingEntityException {
+    public void replyMessage(String content, Long from, Long to, Long replyId) throws MissingEntityException {
         Optional<Message> message = messageRepository.get(replyId);
 
         if (message.isPresent()) {
             messageRepository.store(new Message(
                     content,
-                    message.get().getTo().stream().filter(user -> userRepository.get(user.getId()).isPresent()).collect(Collectors.toList()),
+                    List.of(userRepository.get(to).orElseThrow(() -> new MissingEntityException("User doesn't exist!"))),
                     userRepository.get(from).orElse(User.deletedUser),
                     message.get()
             ));
@@ -92,7 +92,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Message.class);
     }
 
     public void replyAllMessage(String content, Long from, Long replyId) throws MissingEntityException {
@@ -102,11 +102,12 @@ public class Service extends Observable {
             List<User> to = message.get().getTo();
             to.add(message.get().getFrom());
 
-            to = to.stream().filter(user -> userRepository.get(user.getId()).isPresent()).collect(Collectors.toList());
+            to = to.stream().filter(user -> (!user.getId().equals(from) && userRepository.get(user.getId()).isPresent()))
+                    .collect(Collectors.toList());
             messageRepository.store(new Message(
                     content,
                     to,
-                    userRepository.get(from).orElse(User.deletedUser),
+                    userRepository.get(from).orElseThrow(() -> new MissingEntityException("User doesn't exist")),
                     message.get()
             ));
         } else {
@@ -114,7 +115,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Message.class);
     }
 
     public void deleteMessage(Long id) throws MissingEntityException {

@@ -42,12 +42,12 @@ public class RetractRequestController implements Observer {
     public void setService(Service service) {
         this.service = service;
         this.service.addObserver(this);
-        this.userId = authentication.getUserId();
         initModel();
     }
 
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
+        this.userId = authentication.getUserId();
     }
 
     @FXML
