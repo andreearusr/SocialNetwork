@@ -5,6 +5,7 @@ import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.Tuple;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.DuplicateEntityException;
+import com.map.socialnetwork.exceptions.InvalidRequestException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.repository.FriendshipRepository;
 import com.map.socialnetwork.repository.MessageRepository;
@@ -161,7 +162,7 @@ public class Service extends Observable {
         notifyObservers();
     }
 
-    public void respondFriendshipRequest(Long firstUserId, Long secondUserId, Friendship.Status newStatus) throws MissingEntityException {
+    public void respondFriendshipRequest(Long firstUserId, Long secondUserId, Friendship.Status newStatus) throws MissingEntityException, InvalidRequestException {
         User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
         User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
 
@@ -189,19 +190,23 @@ public class Service extends Observable {
         return friendshipRepository.getFriends(user);
     }
 
-    public List<User> getRequested(User user) {
-        return friendshipRepository.getRequested(user);
+    public List<Friendship> getReceivedRequests(User user) {
+        return friendshipRepository.getReceivedRequests(user);
     }
 
     public void removeFriendship(long firstUserId, long secondUserId) throws MissingEntityException {
-        if (firstUserId > secondUserId) {
-            long aux = firstUserId;
-            firstUserId = secondUserId;
-            secondUserId = aux;
-        }
         Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
-        friendship.get().setStatus(Friendship.Status.REJECTED);
-        friendshipRepository.update(friendship.get());
+        Optional<Friendship> friendshipSwap = friendshipRepository.getFriendship(new Tuple<>(secondUserId, firstUserId));
+
+        if (friendship.isPresent()) {
+            friendship.get().setStatus(Friendship.Status.REJECTED);
+            friendshipRepository.update(friendship.get());
+        }
+        else if (friendshipSwap.isPresent()) {
+            friendshipSwap.get().setStatus(Friendship.Status.REJECTED);
+            friendshipRepository.update(friendshipSwap.get());
+        }
+
         setChanged();
         notifyObservers();
     }
@@ -211,18 +216,18 @@ public class Service extends Observable {
     }
 
     public void setFriendshipStatus(long firstUserId, long secondUserId, Friendship.Status newStatus) throws MissingEntityException {
-        if (firstUserId > secondUserId) {
-            long aux = firstUserId;
-            firstUserId = secondUserId;
-            secondUserId = aux;
-        }
-
         Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
-        friendship.get().setStatus(newStatus);
+        friendship.orElseThrow(() -> new MissingEntityException("This request has already been answered or has been retracted!"))
+                .setStatus(newStatus);
+
         friendshipRepository.update(friendship.get());
 
         setChanged();
         notifyObservers();
+    }
+
+    public List<Friendship> getAllFriendshipRequests(long id){
+        return friendshipRepository.getAll(id);
     }
 }
 

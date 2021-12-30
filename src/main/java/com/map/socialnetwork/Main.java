@@ -49,8 +49,8 @@ public class Main extends Application {
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();
-        loginController.setService(service);
         loginController.setAuthentication(authentication);
+        loginController.setService(service);
         loginController.setStage(primaryStage);
     }
 }

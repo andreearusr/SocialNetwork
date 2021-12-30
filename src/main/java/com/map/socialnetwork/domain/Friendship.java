@@ -1,5 +1,6 @@
 package com.map.socialnetwork.domain;
 
+import com.map.socialnetwork.exceptions.InvalidRequestException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * The type Friendship.
@@ -42,17 +44,17 @@ public class Friendship extends Entity<Tuple<User, User>> {
         this.status = Status.PENDING;
     }
 
-    public void respond(User user, Status newStatus) {
+    public void respond(User user, Status newStatus) throws InvalidRequestException {
         if (newStatus == Status.PENDING) {
-            throw new RuntimeException("Invalid status!");
+            throw new InvalidRequestException("Invalid status!");
         }
 
-        if (getId().second() != user) {
-            throw new RuntimeException("User can not respond to friendship request!");
+        if (!Objects.equals(getId().second().getId(), user.getId())) {
+            throw new InvalidRequestException("User can not respond to friendship request!");
         }
 
         if (this.status != Status.PENDING) {
-            throw new RuntimeException("Status is not Pending!");
+            throw new InvalidRequestException("Status is not Pending!");
         }
 
         this.status = newStatus;
