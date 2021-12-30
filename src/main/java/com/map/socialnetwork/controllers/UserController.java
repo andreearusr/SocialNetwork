@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -30,7 +31,7 @@ public class UserController implements Observer {
     private Service service;
     private Stage primaryStage;
 
-    private long userId;
+    private User myUser;
     private final ObservableList<User> model = FXCollections.observableArrayList();
 
     @FXML
@@ -45,16 +46,24 @@ public class UserController implements Observer {
     @FXML
     private Label loggedUser;
 
-    public void setService(Service service) {
+    public void setService(Service service) throws AuthenticationException, IOException {
         this.service = service;
         this.service.addObserver(this);
+
+        Optional<User> user = service.getUser(authentication.getUserId());
+
+        if (user.isEmpty()) {
+            handleLogout();
+            return;
+        }
+
+        this.myUser = user.get();
+        loggedUser.setText(myUser.toString());
         initModel();
-        loggedUser.setText(service.getUser(userId).get().toString());
     }
 
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
-        this.userId = authentication.getUserId();
     }
 
     public void setStage(Stage primaryStage) {
@@ -75,8 +84,7 @@ public class UserController implements Observer {
     }
 
     private void initModel() {
-        User user = service.getUser(userId).get();
-        Iterable<User> friends = service.getFriends(user);
+        Iterable<User> friends = service.getFriends(myUser);
         List<User> friendsList = StreamSupport.stream(friends.spliterator(), false)
                 .collect(Collectors.toList());
         model.setAll(friendsList);
@@ -87,13 +95,14 @@ public class UserController implements Observer {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addFriend.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
-        primaryStage.setTitle("Add Friend");
-        primaryStage.setScene(scene);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Add Friends");
+        stage.show();
 
         AddFriendController addFriendController = fxmlLoader.getController();
-        addFriendController.setAuthentication(authentication);
+        addFriendController.setUser(myUser);
         addFriendController.setService(service);
-        addFriendController.setStage(primaryStage);
     }
 
     @FXML
@@ -119,9 +128,8 @@ public class UserController implements Observer {
         dialogStage.setResizable(false);
 
         FriendshipRequestsController friendshipRequestsController = fxmlLoader.getController();
-        friendshipRequestsController.setAuthentication(authentication);
+        friendshipRequestsController.setUser(myUser);
         friendshipRequestsController.setService(service);
-        friendshipRequestsController.setStage(dialogStage);
 
         dialogStage.show();
     }
@@ -149,7 +157,7 @@ public class UserController implements Observer {
         stage.show();
 
         RespondToFriendRequestController respondToFriendRequestController = fxmlLoader.getController();
-        respondToFriendRequestController.setAuthentication(authentication);
+        respondToFriendRequestController.setUser(myUser);
         respondToFriendRequestController.setService(service);
     }
 
@@ -162,7 +170,7 @@ public class UserController implements Observer {
         stage.show();
 
         RetractRequestController retractRequestController = fxmlLoader.getController();
-        retractRequestController.setAuthentication(authentication);
+        retractRequestController.setUser(myUser);
         retractRequestController.setService(service);
     }
 
@@ -175,7 +183,7 @@ public class UserController implements Observer {
         stage.show();
 
         ConversationsController conversationsController = fxmlLoader.getController();
-        conversationsController.setAuthentication(authentication);
+        conversationsController.setUser(myUser);
         conversationsController.setService(service);
     }
 
@@ -188,7 +196,7 @@ public class UserController implements Observer {
         stage.show();
 
         MessageSenderController messageSenderController = fxmlLoader.getController();
-        messageSenderController.setAuthentication(authentication);
+        messageSenderController.setUser(myUser);
         messageSenderController.setService(service);
     }
 }

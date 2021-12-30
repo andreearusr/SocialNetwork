@@ -50,10 +50,10 @@ public class LoginController {
         }
     }
 
-    private void changeScene() throws IOException {
+    private void changeScene() throws IOException, AuthenticationException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userLogin.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Social Network!");
+        primaryStage.setTitle("Meta");
         primaryStage.setScene(scene);
 
         UserController userController = fxmlLoader.getController();
@@ -61,5 +61,4 @@ public class LoginController {
         userController.setService(service);
         userController.setStage(primaryStage);
     }
-
 }

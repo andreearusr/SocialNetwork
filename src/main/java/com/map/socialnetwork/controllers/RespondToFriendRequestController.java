@@ -1,9 +1,9 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.domain.Friendship;
+import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.InvalidRequestException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
-import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -19,10 +19,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class RespondToFriendRequestController implements Observer {
-    private Authentication authentication;
     private Service service;
-
-    private long userId;
+    private User myUser;
 
     private final ObservableList<Friendship> model = FXCollections.observableArrayList();
 
@@ -41,9 +39,8 @@ public class RespondToFriendRequestController implements Observer {
         initModel();
     }
 
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-        this.userId = authentication.getUserId();
+    public void setUser(User user) {
+        this.myUser = user;
     }
 
     @Override
@@ -60,7 +57,7 @@ public class RespondToFriendRequestController implements Observer {
     }
 
     private void initModel() {
-        List<Friendship> friends = service.getReceivedRequests(service.getUser(userId).get());
+        List<Friendship> friends = service.getReceivedRequests(myUser);
         model.setAll(friends);
     }
 
@@ -68,7 +65,7 @@ public class RespondToFriendRequestController implements Observer {
     private void acceptFriendRequest() {
         try {
             Long selectedUserId = requests.getSelectionModel().getSelectedItem().getId().first().getId();
-            service.respondFriendshipRequest(selectedUserId, userId, Friendship.Status.ACCEPTED);
+            service.respondFriendshipRequest(selectedUserId, myUser.getId(), Friendship.Status.ACCEPTED);
         } catch (MissingEntityException | InvalidRequestException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
             e.printStackTrace();
@@ -82,7 +79,7 @@ public class RespondToFriendRequestController implements Observer {
     private void rejectFriendRequest() {
         try {
             Long selectedUserId = requests.getSelectionModel().getSelectedItem().getId().first().getId();
-            service.respondFriendshipRequest(selectedUserId, userId, Friendship.Status.REJECTED);
+            service.respondFriendshipRequest(selectedUserId, myUser.getId(), Friendship.Status.REJECTED);
         } catch (MissingEntityException | InvalidRequestException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
             e.printStackTrace();

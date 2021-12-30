@@ -5,16 +5,14 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="384.0" prefWidth="372.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.AddFriendController">
+<AnchorPane prefHeight="331.0" prefWidth="615.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.AddFriendController">
     <children>
-        <TableView fx:id="tableUsers" layoutX="21.0" layoutY="8.0" prefHeight="234.0" prefWidth="319.0">
+        <TableView fx:id="tableUsers" layoutX="21.0" layoutY="8.0" prefHeight="249.0" prefWidth="575.0">
             <columns>
-                <TableColumn fx:id="IdColumn" prefWidth="75.0" text="Id" />
-                <TableColumn fx:id="FirstNameColumn" prefWidth="104.79998779296875" text="First Name" />
-                <TableColumn fx:id="LastNameColumn" prefWidth="138.4000244140625" text="Last Name" />
+                <TableColumn fx:id="FirstNameColumn" prefWidth="288.0" text="First Name" />
+                <TableColumn fx:id="LastNameColumn" prefWidth="286.0" text="Last Name" />
             </columns>
         </TableView>
-        <Button layoutX="28.0" layoutY="283.0" mnemonicParsing="false" onAction="#handleAddFriend" text="Add friend" />
-        <Button layoutX="304.0" layoutY="336.0" mnemonicParsing="false" onAction="#handleClose" text="Close" />
+        <Button layoutX="165.0" layoutY="272.0" mnemonicParsing="false" onAction="#handleAddFriend" prefHeight="34.0" prefWidth="288.0" text="Add friend" />
     </children>
 </AnchorPane>

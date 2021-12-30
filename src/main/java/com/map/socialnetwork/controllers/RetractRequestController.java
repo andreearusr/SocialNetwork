@@ -1,15 +1,14 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.domain.Friendship;
+import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.InvalidRequestException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
-import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,11 +19,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class RetractRequestController implements Observer {
-    private Authentication authentication;
     private Service service;
-
-    private long userId;
-
+    private User myUser;
     private final ObservableList<Friendship> model = FXCollections.observableArrayList();
 
     @FXML
@@ -42,9 +38,8 @@ public class RetractRequestController implements Observer {
         initModel();
     }
 
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-        this.userId = authentication.getUserId();
+    public void setUser(User user) {
+        this.myUser = user;
     }
 
     @Override
@@ -61,7 +56,7 @@ public class RetractRequestController implements Observer {
     }
 
     private void initModel() {
-        List<Friendship> requests = service.getSentPendingRequests(service.getUser(userId).get());
+        List<Friendship> requests = service.getSentPendingRequests(myUser);
         model.setAll(requests);
     }
 
@@ -69,7 +64,7 @@ public class RetractRequestController implements Observer {
     private void retractFriendRequest() {
         try {
             Long selectedUserId = requests.getSelectionModel().getSelectedItem().getId().second().getId();
-            service.retractRequest(service.getUser(userId).orElseThrow(() -> new MissingEntityException("Invalid user!")),
+            service.retractRequest(myUser,
                     service.getUser(selectedUserId).orElseThrow(() -> new MissingEntityException("Invalid user!")));
         } catch (MissingEntityException | InvalidRequestException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());

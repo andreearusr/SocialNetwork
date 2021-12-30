@@ -1,8 +1,5 @@
 package com.map.socialnetwork.utils;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 public class Hashes {
     public static String MD5(String text) {
         return text;
