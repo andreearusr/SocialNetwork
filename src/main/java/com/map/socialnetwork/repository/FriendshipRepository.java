@@ -101,11 +101,11 @@ public class FriendshipRepository extends AbstractRepository {
         return friends;
     }
 
-    public List<User> getRequested(User user) {
-        List<User> requested = new ArrayList<>();
+    public List<Friendship> getReceivedRequests(User user) {
+        List<Friendship> requests = new ArrayList<>();
 
         String sql = """
-                SELECT first_user from friendships WHERE second_user = (?)
+                SELECT first_user, date from friendships WHERE second_user = (?)
                 AND status='PENDING'
                 """;
 
@@ -116,13 +116,16 @@ public class FriendshipRepository extends AbstractRepository {
 
             while (resultSet.next()) {
                 long userId = resultSet.getLong(1);
-                userRepository.get(userId).ifPresent(requested::add);
+                Timestamp timestamp = resultSet.getTimestamp(2);
+
+                User sender = userRepository.get(userId).orElse(User.deletedUser);
+                requests.add(new Friendship(new Tuple<>(sender, user), timestamp, Friendship.Status.PENDING));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return requested;
+        return requests;
     }
 
     public Optional<Friendship> getFriendship(Tuple<Long, Long> id) throws MissingEntityException {

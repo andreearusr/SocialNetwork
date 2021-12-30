@@ -40,9 +40,6 @@ public class UserController implements Observer {
     private TableColumn<User, String> LastNameColumn;
 
     @FXML
-    private TableColumn<User, Long> IdColumn;
-
-    @FXML
     private TableView<User> friendsTable;
 
     @FXML
@@ -72,7 +69,6 @@ public class UserController implements Observer {
     public void initialize() {
         FirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         LastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        IdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         friendsTable.setItems(model);
     }
@@ -101,10 +97,13 @@ public class UserController implements Observer {
 
     @FXML
     public void handleRemoveFriend() throws MissingEntityException {
-        long firstUserid = authentication.getUserId();
-        long secondUserid = friendsTable.getSelectionModel().getSelectedItem().getId();
-        service.removeFriendship(firstUserid, secondUserid);
-
+        try {
+            long firstUserid = authentication.getUserId();
+            long secondUserid = friendsTable.getSelectionModel().getSelectedItem().getId();
+            service.removeFriendship(firstUserid, secondUserid);
+        } catch (NullPointerException nullPointerException) {
+            MessageAlert.showErrorMessage(null, "Please select a user first!");
+        }
     }
 
     @FXML
@@ -136,9 +135,22 @@ public class UserController implements Observer {
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();
-        loginController.setService(service);
         loginController.setAuthentication(authentication);
+        loginController.setService(service);
         loginController.setStage(primaryStage);
+    }
+
+    @FXML
+    public void respondToFriendRequest() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("respondToFriendRequest.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+
+        RespondToFriendRequestController respondToFriendRequestController = fxmlLoader.getController();
+        respondToFriendRequestController.setAuthentication(authentication);
+        respondToFriendRequestController.setService(service);
     }
 
     @Override

@@ -34,4 +34,8 @@ public class User extends Entity<Long> {
     public String toString() {
         return firstName + " " + lastName;
     }
+
+    public String getFullName() {
+        return firstName + ' ' + lastName;
+    }
 }
