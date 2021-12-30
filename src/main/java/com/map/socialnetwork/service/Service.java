@@ -26,7 +26,7 @@ public class Service extends Observable {
 
     public void addUser(String firstName, String lastName) {
         userRepository.store(new User(firstName, lastName));
-        notifyObservers();
+        notifyObservers(User.class);
     }
 
     public void deleteUser(long id) throws MissingEntityException {
@@ -40,7 +40,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(User.class);
     }
 
     public void updateUser(long id, String newFirstName, String newSecondName) throws MissingEntityException {
@@ -53,7 +53,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(User.class);
     }
 
     public List<User> getUsers() {
@@ -128,7 +128,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Message.class);
     }
 
     public List<Message> getConversation(Long firstUserId, Long secondUserId) throws MissingEntityException {
@@ -160,7 +160,7 @@ public class Service extends Observable {
 
         friendshipRepository.store(new Friendship(firstUser, secondUser));
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
     }
 
     public void respondFriendshipRequest(Long firstUserId, Long secondUserId, Friendship.Status newStatus) throws MissingEntityException, InvalidRequestException {
@@ -184,7 +184,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
     }
 
     public List<User> getFriends(User user) {
@@ -209,7 +209,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
     }
 
     public List<User> getUnrelatedUsers(User user) {
@@ -224,7 +224,7 @@ public class Service extends Observable {
         friendshipRepository.update(friendship.get());
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
     }
     
     public void retractRequest(User firstUser, User secondUser) throws MissingEntityException, InvalidRequestException {
@@ -241,7 +241,7 @@ public class Service extends Observable {
         friendshipRepository.deleteFriendship(friendship.get());
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
     }
 
     public List<Friendship> getSentPendingRequests(User user) {
