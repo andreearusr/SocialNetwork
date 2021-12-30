@@ -175,6 +175,19 @@ public class UserController implements Observer {
         conversationsController.setService(service);
     }
 
+    @FXML
+    private void handleSendMessage() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("messageSender.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+
+        MessageSenderController messageSenderController = fxmlLoader.getController();
+        messageSenderController.setAuthentication(authentication);
+        messageSenderController.setService(service);
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         initModel();
