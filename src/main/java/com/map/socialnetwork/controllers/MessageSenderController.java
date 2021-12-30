@@ -49,8 +49,13 @@ public class MessageSenderController implements Observer {
         this.userId = authentication.getUserId();
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         firstName.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getFirstName()));
         lastName.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getLastName()));
 
@@ -79,10 +84,5 @@ public class MessageSenderController implements Observer {
         service.sendSingleMessage(inputText.getText(), usersTable.getSelectionModel().getSelectedItems().stream()
                 .map(Entity::getId)
                 .collect(Collectors.toList()), userId);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
     }
 }

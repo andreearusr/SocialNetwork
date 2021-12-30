@@ -9,7 +9,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -25,7 +24,7 @@ public class RespondToFriendRequestController implements Observer {
 
     private long userId;
 
-    ObservableList<Friendship> model = FXCollections.observableArrayList();
+    private final ObservableList<Friendship> model = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Friendship> requests;
@@ -35,12 +34,6 @@ public class RespondToFriendRequestController implements Observer {
 
     @FXML
     private TableColumn<Friendship, Timestamp> date;
-
-    @FXML
-    private Button accept;
-
-    @FXML
-    private Button reject;
 
     public void setService(Service service) {
         this.service = service;
@@ -53,8 +46,13 @@ public class RespondToFriendRequestController implements Observer {
         this.userId = authentication.getUserId();
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         from.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getId().first().getFullName()));
         date.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
 
@@ -64,11 +62,6 @@ public class RespondToFriendRequestController implements Observer {
     private void initModel() {
         List<Friendship> friends = service.getReceivedRequests(service.getUser(userId).get());
         model.setAll(friends);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
     }
 
     @FXML

@@ -63,8 +63,34 @@ public class ConversationsController implements Observer {
 
     private ObservableList<User> selectedUser;
 
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg == Message.class) {
+            initMessages();
+        } else {
+            initModel();
+        }
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+        service.addObserver(this);
+
+        selectedUser = usersTable.getSelectionModel().getSelectedItems();
+        selectedUser.addListener((ListChangeListener<User>) c -> {
+            initMessages();
+        });
+        initModel();
+        usersTable.getSelectionModel().select(0);
+    }
+
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
+        this.userId = authentication.getUserId();
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         user.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFullName()));
         from.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFrom().getFullName()));
         to.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTo()
@@ -78,7 +104,7 @@ public class ConversationsController implements Observer {
         messages.setItems(messagesModel);
     }
 
-    public void initModel() {
+    private void initModel() {
         initUsers();
         initMessages();
     }
@@ -99,23 +125,6 @@ public class ConversationsController implements Observer {
         } catch (MissingEntityException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-        service.addObserver(this);
-
-        selectedUser = usersTable.getSelectionModel().getSelectedItems();
-        selectedUser.addListener((ListChangeListener<User>) c -> {
-            initMessages();
-        });
-        initModel();
-        usersTable.getSelectionModel().select(0);
-    }
-
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-        this.userId = authentication.getUserId();
     }
 
     @FXML
@@ -148,14 +157,5 @@ public class ConversationsController implements Observer {
         }
 
         inputMessage.clear();
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if (arg == Message.class) {
-            initMessages();
-        } else {
-            initModel();
-        }
     }
 }

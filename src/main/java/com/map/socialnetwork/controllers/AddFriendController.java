@@ -40,7 +40,6 @@ public class AddFriendController implements Observer {
     @FXML
     private TableView<User> tableUsers;
 
-
     public void setService(Service service) {
         this.service = service;
         this.service.addObserver(this);
@@ -56,8 +55,13 @@ public class AddFriendController implements Observer {
         this.primaryStage = primaryStage;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         FirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         LastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         IdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -73,7 +77,7 @@ public class AddFriendController implements Observer {
     }
 
     @FXML
-    public void handleAddFriend() {
+    private void handleAddFriend() {
         User user = tableUsers.getSelectionModel().getSelectedItem();
 
         try {
@@ -86,7 +90,7 @@ public class AddFriendController implements Observer {
     }
 
     @FXML
-    public void handleClose() throws IOException {
+    private void handleClose() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userLogin.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setTitle("Social Network!");
@@ -96,10 +100,5 @@ public class AddFriendController implements Observer {
         userController.setAuthentication(authentication);
         userController.setService(service);
         userController.setStage(primaryStage);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
     }
 }

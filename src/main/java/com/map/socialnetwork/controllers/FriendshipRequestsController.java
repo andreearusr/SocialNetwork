@@ -20,9 +20,9 @@ import java.util.Observer;
 
 public class FriendshipRequestsController implements Observer {
 
-    Service service;
-    Authentication authentication;
-    Stage primaryStage;
+    private Service service;
+    private Authentication authentication;
+    private Stage primaryStage;
 
     private long userId;
     private final ObservableList<Friendship> model = FXCollections.observableArrayList();
@@ -57,8 +57,13 @@ public class FriendshipRequestsController implements Observer {
         this.primaryStage = primaryStage;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         FromColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId().first().toString()));
         ToColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId().second().toString()));
         StatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -71,10 +76,4 @@ public class FriendshipRequestsController implements Observer {
         List<Friendship> friendships = service.getAllFriendshipRequests(userId);
         model.setAll(friendships);
     }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
-    }
-
 }

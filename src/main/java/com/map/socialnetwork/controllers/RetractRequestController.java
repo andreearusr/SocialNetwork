@@ -25,7 +25,7 @@ public class RetractRequestController implements Observer {
 
     private long userId;
 
-    ObservableList<Friendship> model = FXCollections.observableArrayList();
+    private final ObservableList<Friendship> model = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Friendship> requests;
@@ -35,9 +35,6 @@ public class RetractRequestController implements Observer {
 
     @FXML
     private TableColumn<Friendship, Timestamp> date;
-
-    @FXML
-    private Button retract;
 
     public void setService(Service service) {
         this.service = service;
@@ -50,8 +47,13 @@ public class RetractRequestController implements Observer {
         this.userId = authentication.getUserId();
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         to.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getId().second().getFullName()));
         date.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
 
@@ -62,12 +64,6 @@ public class RetractRequestController implements Observer {
         List<Friendship> requests = service.getSentPendingRequests(service.getUser(userId).get());
         model.setAll(requests);
     }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
-    }
-
 
     @FXML
     private void retractFriendRequest() {

@@ -31,7 +31,7 @@ public class UserController implements Observer {
     private Stage primaryStage;
 
     private long userId;
-    ObservableList<User> model = FXCollections.observableArrayList();
+    private final ObservableList<User> model = FXCollections.observableArrayList();
 
     @FXML
     private TableColumn<User, String> FirstNameColumn;
@@ -61,8 +61,13 @@ public class UserController implements Observer {
         this.primaryStage = primaryStage;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         FirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         LastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
 
@@ -78,7 +83,7 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void handleAddFriend() throws IOException {
+    private void handleAddFriend() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addFriend.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
@@ -92,7 +97,7 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void handleRemoveFriend() throws MissingEntityException {
+    private void handleRemoveFriend() throws MissingEntityException {
         try {
             long firstUserid = authentication.getUserId();
             long secondUserid = friendsTable.getSelectionModel().getSelectedItem().getId();
@@ -103,7 +108,7 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void handleFriendRequests() throws IOException {
+    private void handleFriendRequests() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("friendReq.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
@@ -119,11 +124,10 @@ public class UserController implements Observer {
         friendshipRequestsController.setStage(dialogStage);
 
         dialogStage.show();
-
     }
 
     @FXML
-    public void handleLogout() throws AuthenticationException, IOException {
+    private void handleLogout() throws AuthenticationException, IOException {
         authentication.logOut();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
@@ -137,7 +141,7 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void handleRespondToFriendRequest() throws IOException {
+    private void handleRespondToFriendRequest() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("respondToFriendRequest.fxml"));
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
@@ -150,7 +154,7 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void handleRetractFriendRequest() throws IOException {
+    private void handleRetractFriendRequest() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("retractFriendRequest.fxml"));
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
@@ -186,10 +190,5 @@ public class UserController implements Observer {
         MessageSenderController messageSenderController = fxmlLoader.getController();
         messageSenderController.setAuthentication(authentication);
         messageSenderController.setService(service);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
     }
 }
