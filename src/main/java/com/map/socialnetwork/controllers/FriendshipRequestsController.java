@@ -2,7 +2,6 @@ package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.User;
-import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -11,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -19,12 +17,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class FriendshipRequestsController implements Observer {
+    private Service service;
+    private User myUser;
 
-    Service service;
-    Authentication authentication;
-    Stage primaryStage;
-
-    private long userId;
     private final ObservableList<Friendship> model = FXCollections.observableArrayList();
 
     @FXML
@@ -48,17 +43,17 @@ public class FriendshipRequestsController implements Observer {
         initModel();
     }
 
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-        this.userId = authentication.getUserId();
+    public void setUser(User user) {
+        this.myUser = user;
     }
 
-    public void setStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
     }
 
     @FXML
-    public void initialize() {
+    private void initialize() {
         FromColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId().first().toString()));
         ToColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId().second().toString()));
         StatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -68,13 +63,7 @@ public class FriendshipRequestsController implements Observer {
     }
 
     private void initModel() {
-        List<Friendship> friendships = service.getAllFriendshipRequests(userId);
+        List<Friendship> friendships = service.getAllFriendshipRequests(myUser.getId());
         model.setAll(friendships);
     }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
-    }
-
 }

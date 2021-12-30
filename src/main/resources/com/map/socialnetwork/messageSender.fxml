@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="507.0" prefWidth="754.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.MessageSenderController">
+<AnchorPane prefHeight="507.0" prefWidth="754.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.MessageSenderController">
    <children>
       <TextField fx:id="inputText" layoutX="7.0" layoutY="254.0" prefHeight="186.0" prefWidth="741.0" />
       <Button layoutX="292.0" layoutY="455.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="38.0" prefWidth="172.0" text="Send" />

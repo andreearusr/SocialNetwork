@@ -3,7 +3,6 @@ package com.map.socialnetwork.controllers;
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.MissingEntityException;
-import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -23,10 +22,8 @@ import java.util.Observer;
 import java.util.stream.Collectors;
 
 public class ConversationsController implements Observer {
-
     private Service service;
-    private Authentication authentication;
-    private Long userId;
+    private User myUser;
 
     private final ObservableList<User> usersModel = FXCollections.observableArrayList();
     private final ObservableList<Message> messagesModel = FXCollections.observableArrayList();
@@ -63,8 +60,31 @@ public class ConversationsController implements Observer {
 
     private ObservableList<User> selectedUser;
 
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg == Message.class) {
+            initMessages();
+        } else {
+            initModel();
+        }
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+        service.addObserver(this);
+
+        selectedUser = usersTable.getSelectionModel().getSelectedItems();
+        selectedUser.addListener((ListChangeListener<User>) c -> initMessages());
+        initModel();
+        usersTable.getSelectionModel().select(0);
+    }
+
+    public void setUser(User user) {
+        this.myUser = user;
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         user.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFullName()));
         from.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFrom().getFullName()));
         to.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTo()
@@ -78,14 +98,14 @@ public class ConversationsController implements Observer {
         messages.setItems(messagesModel);
     }
 
-    public void initModel() {
+    private void initModel() {
         initUsers();
         initMessages();
     }
 
     private void initUsers() {
         List<User> users = service.getUsers();
-        users.removeIf(user -> user.getId().equals(userId));
+        users.removeIf(user -> user.getId().equals(myUser.getId()));
         usersModel.setAll(users);
     }
 
@@ -94,28 +114,11 @@ public class ConversationsController implements Observer {
             if (selectedUser.isEmpty()) {
                 messagesModel.clear();
             } else {
-                messagesModel.setAll(service.getConversation(userId, selectedUser.get(0).getId()));
+                messagesModel.setAll(service.getConversation(myUser.getId(), selectedUser.get(0).getId()));
             }
         } catch (MissingEntityException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-        service.addObserver(this);
-
-        selectedUser = usersTable.getSelectionModel().getSelectedItems();
-        selectedUser.addListener((ListChangeListener<User>) c -> {
-            initMessages();
-        });
-        initModel();
-        usersTable.getSelectionModel().select(0);
-    }
-
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-        this.userId = authentication.getUserId();
     }
 
     @FXML
@@ -126,11 +129,11 @@ public class ConversationsController implements Observer {
         }
 
         if (messages.getSelectionModel().isEmpty()) {
-            service.sendSingleMessage(inputMessage.getText(), List.of(selectedUser.get(0).getId()), userId);
+            service.sendSingleMessage(inputMessage.getText(), List.of(selectedUser.get(0).getId()), myUser.getId());
         } else {
             if (!replyAll.isSelected()) {
                 try {
-                    service.replyMessage(inputMessage.getText(), userId, selectedUser.get(0).getId(),
+                    service.replyMessage(inputMessage.getText(), myUser.getId(), selectedUser.get(0).getId(),
                             messages.getSelectionModel().getSelectedItem().getId());
                 } catch (MissingEntityException e) {
                     MessageAlert.showErrorMessage(null, e.getMessage());
@@ -138,7 +141,7 @@ public class ConversationsController implements Observer {
                 }
             } else {
                 try {
-                    service.replyAllMessage(inputMessage.getText(), userId, messages.getSelectionModel()
+                    service.replyAllMessage(inputMessage.getText(), myUser.getId(), messages.getSelectionModel()
                             .getSelectedItem().getId());
                 } catch (MissingEntityException e) {
                     MessageAlert.showErrorMessage(null, e.getMessage());
@@ -148,14 +151,5 @@ public class ConversationsController implements Observer {
         }
 
         inputMessage.clear();
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if (arg == Message.class) {
-            initMessages();
-        } else {
-            initModel();
-        }
     }
 }

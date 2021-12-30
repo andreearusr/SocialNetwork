@@ -2,7 +2,6 @@ package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.domain.Entity;
 import com.map.socialnetwork.domain.User;
-import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -19,10 +18,8 @@ import java.util.Observer;
 import java.util.stream.Collectors;
 
 public class MessageSenderController implements Observer {
-    private Authentication authentication;
     private Service service;
-
-    private long userId;
+    private User myUser;
 
     private final ObservableList<User> usersModel = FXCollections.observableArrayList();
 
@@ -44,13 +41,17 @@ public class MessageSenderController implements Observer {
         initModel();
     }
 
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-        this.userId = authentication.getUserId();
+    public void setUser(User user) {
+        this.myUser = user;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
     }
 
     @FXML
-    public void initialize() {
+    private void initialize() {
         firstName.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getFirstName()));
         lastName.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getLastName()));
 
@@ -60,7 +61,7 @@ public class MessageSenderController implements Observer {
 
     private void initModel() {
         List<User> users = service.getUsers();
-        users.removeIf(user -> user.getId().equals(userId));
+        users.removeIf(user -> user.getId().equals(myUser.getId()));
         usersModel.setAll(users);
     }
 
@@ -78,11 +79,6 @@ public class MessageSenderController implements Observer {
 
         service.sendSingleMessage(inputText.getText(), usersTable.getSelectionModel().getSelectedItems().stream()
                 .map(Entity::getId)
-                .collect(Collectors.toList()), userId);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
+                .collect(Collectors.toList()), myUser.getId());
     }
 }

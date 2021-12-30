@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -30,8 +31,8 @@ public class UserController implements Observer {
     private Service service;
     private Stage primaryStage;
 
-    private long userId;
-    ObservableList<User> model = FXCollections.observableArrayList();
+    private User myUser;
+    private final ObservableList<User> model = FXCollections.observableArrayList();
 
     @FXML
     private TableColumn<User, String> FirstNameColumn;
@@ -45,24 +46,37 @@ public class UserController implements Observer {
     @FXML
     private Label loggedUser;
 
-    public void setService(Service service) {
+    public void setService(Service service) throws AuthenticationException, IOException {
         this.service = service;
         this.service.addObserver(this);
+
+        Optional<User> user = service.getUser(authentication.getUserId());
+
+        if (user.isEmpty()) {
+            handleLogout();
+            return;
+        }
+
+        this.myUser = user.get();
+        loggedUser.setText(myUser.toString());
         initModel();
-        loggedUser.setText(service.getUser(userId).get().toString());
     }
 
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
-        this.userId = authentication.getUserId();
     }
 
     public void setStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        initModel();
+    }
+
     @FXML
-    public void initialize() {
+    private void initialize() {
         FirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         LastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
 
@@ -70,29 +84,29 @@ public class UserController implements Observer {
     }
 
     private void initModel() {
-        User user = service.getUser(userId).get();
-        Iterable<User> friends = service.getFriends(user);
+        Iterable<User> friends = service.getFriends(myUser);
         List<User> friendsList = StreamSupport.stream(friends.spliterator(), false)
                 .collect(Collectors.toList());
         model.setAll(friendsList);
     }
 
     @FXML
-    public void handleAddFriend() throws IOException {
+    private void handleAddFriend() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addFriend.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
-        primaryStage.setTitle("Add Friend");
-        primaryStage.setScene(scene);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Add Friends");
+        stage.show();
 
         AddFriendController addFriendController = fxmlLoader.getController();
-        addFriendController.setAuthentication(authentication);
+        addFriendController.setUser(myUser);
         addFriendController.setService(service);
-        addFriendController.setStage(primaryStage);
     }
 
     @FXML
-    public void handleRemoveFriend() throws MissingEntityException {
+    private void handleRemoveFriend() throws MissingEntityException {
         try {
             long firstUserid = authentication.getUserId();
             long secondUserid = friendsTable.getSelectionModel().getSelectedItem().getId();
@@ -103,7 +117,7 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void handleFriendRequests() throws IOException {
+    private void handleFriendRequests() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("friendReq.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
@@ -114,16 +128,14 @@ public class UserController implements Observer {
         dialogStage.setResizable(false);
 
         FriendshipRequestsController friendshipRequestsController = fxmlLoader.getController();
-        friendshipRequestsController.setAuthentication(authentication);
+        friendshipRequestsController.setUser(myUser);
         friendshipRequestsController.setService(service);
-        friendshipRequestsController.setStage(dialogStage);
 
         dialogStage.show();
-
     }
 
     @FXML
-    public void handleLogout() throws AuthenticationException, IOException {
+    private void handleLogout() throws AuthenticationException, IOException {
         authentication.logOut();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
@@ -137,7 +149,7 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void handleRespondToFriendRequest() throws IOException {
+    private void handleRespondToFriendRequest() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("respondToFriendRequest.fxml"));
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
@@ -145,12 +157,12 @@ public class UserController implements Observer {
         stage.show();
 
         RespondToFriendRequestController respondToFriendRequestController = fxmlLoader.getController();
-        respondToFriendRequestController.setAuthentication(authentication);
+        respondToFriendRequestController.setUser(myUser);
         respondToFriendRequestController.setService(service);
     }
 
     @FXML
-    public void handleRetractFriendRequest() throws IOException {
+    private void handleRetractFriendRequest() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("retractFriendRequest.fxml"));
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
@@ -158,7 +170,7 @@ public class UserController implements Observer {
         stage.show();
 
         RetractRequestController retractRequestController = fxmlLoader.getController();
-        retractRequestController.setAuthentication(authentication);
+        retractRequestController.setUser(myUser);
         retractRequestController.setService(service);
     }
 
@@ -171,7 +183,7 @@ public class UserController implements Observer {
         stage.show();
 
         ConversationsController conversationsController = fxmlLoader.getController();
-        conversationsController.setAuthentication(authentication);
+        conversationsController.setUser(myUser);
         conversationsController.setService(service);
     }
 
@@ -184,12 +196,7 @@ public class UserController implements Observer {
         stage.show();
 
         MessageSenderController messageSenderController = fxmlLoader.getController();
-        messageSenderController.setAuthentication(authentication);
+        messageSenderController.setUser(myUser);
         messageSenderController.setService(service);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        initModel();
     }
 }

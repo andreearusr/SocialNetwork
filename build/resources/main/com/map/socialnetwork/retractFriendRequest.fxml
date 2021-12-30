@@ -4,7 +4,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-
 <AnchorPane prefHeight="301.0" prefWidth="451.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.RetractRequestController">
    <children>
       <TableView fx:id="requests" layoutX="14.0" layoutY="14.0" prefHeight="208.0" prefWidth="421.0">
