@@ -4,11 +4,9 @@ import com.map.socialnetwork.Main;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -16,9 +14,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LoginController {
-    Service service;
-    Authentication authentication;
-    Stage primaryStage;
+    private Service service;
+    private Authentication authentication;
+    private Stage primaryStage;
 
     @FXML
     private TextField inputUsername;
@@ -27,19 +25,8 @@ public class LoginController {
     private PasswordField inputPassword;
 
     @FXML
-    private Button loginButton;
-
-    public void userLogin(ActionEvent event) {
+    public void userLogin() {
         tryLogin(inputUsername.getText(), inputPassword.getText());
-    }
-
-    private void tryLogin(String username, String password) {
-        try {
-            authentication.logIn(username, password);
-            changeScene();
-        } catch (AuthenticationException | IOException e) {
-            MessageAlert.showErrorMessage(null, e.getMessage());
-        }
     }
 
     public void setService(Service service) {
@@ -54,10 +41,19 @@ public class LoginController {
         this.primaryStage = primaryStage;
     }
 
-    private void changeScene() throws IOException {
+    private void tryLogin(String username, String password) {
+        try {
+            authentication.logIn(username, password);
+            changeScene();
+        } catch (AuthenticationException | IOException e) {
+            MessageAlert.showErrorMessage(null, e.getMessage());
+        }
+    }
+
+    private void changeScene() throws IOException, AuthenticationException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userLogin.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Social Network!");
+        primaryStage.setTitle("Meta");
         primaryStage.setScene(scene);
 
         UserController userController = fxmlLoader.getController();
@@ -65,5 +61,4 @@ public class LoginController {
         userController.setService(service);
         userController.setStage(primaryStage);
     }
-
 }

@@ -43,6 +43,18 @@ public class FriendshipRepository extends AbstractRepository {
         }
     }
 
+    public void deleteFriendship(Friendship friendship) {
+        String sql = "DELETE FROM friendships WHERE first_user=(?) AND second_user=(?)";
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, friendship.getId().first().getId());
+            ps.setLong(2, friendship.getId().second().getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void deleteFriendshipsRelatedToUser(User user) {
         String sql = "DELETE FROM friendships WHERE first_user=(?) OR second_user=(?)";
 
@@ -131,8 +143,8 @@ public class FriendshipRepository extends AbstractRepository {
     public Optional<Friendship> getFriendship(Tuple<Long, Long> id) throws MissingEntityException {
         Friendship friendship = null;
 
-        User firstUser = userRepository.get(id.first()).orElseThrow(() -> new MissingEntityException("First id is invalid!"));
-        User secondUSer = userRepository.get(id.second()).orElseThrow(() -> new MissingEntityException("Second id is invalid!"));
+        User firstUser = userRepository.get(id.first()).orElseThrow(() -> new MissingEntityException("Invalid user!"));
+        User secondUSer = userRepository.get(id.second()).orElseThrow(() -> new MissingEntityException("Invalid user!"));
 
         String sql = """
                 SELECT status, date from friendships WHERE first_user = (?)
@@ -151,12 +163,46 @@ public class FriendshipRepository extends AbstractRepository {
 
                 friendship = new Friendship(new Tuple<>(firstUser, secondUSer),
                         time, Friendship.Status.valueOf(status));
+
+                return Optional.of(friendship);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return Optional.ofNullable(friendship);
+    }
+
+    public List<Friendship> getSentPendingRequests(User user) {
+        List<Friendship> requests = new ArrayList<>();
+
+        String sql = """
+                SELECT second_user, date from friendships WHERE first_user = (?)
+                AND status='PENDING'
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, user.getId());
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                long userId = resultSet.getLong(1);
+                Timestamp timestamp = resultSet.getTimestamp(2);
+
+                User receiver = userRepository.get(userId).orElse(User.deletedUser);
+
+                if (receiver == User.deletedUser) {
+                    continue;
+                }
+
+                requests.add(new Friendship(new Tuple<>(user, receiver), timestamp, Friendship.Status.PENDING));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return requests;
     }
 
     public List<User> getUnrelatedUsers(User user) {

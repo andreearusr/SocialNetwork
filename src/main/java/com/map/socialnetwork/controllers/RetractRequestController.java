@@ -18,17 +18,16 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class RespondToFriendRequestController implements Observer {
+public class RetractRequestController implements Observer {
     private Service service;
     private User myUser;
-
     private final ObservableList<Friendship> model = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Friendship> requests;
 
     @FXML
-    private TableColumn<Friendship, String> from;
+    private TableColumn<Friendship, String> to;
 
     @FXML
     private TableColumn<Friendship, Timestamp> date;
@@ -50,36 +49,23 @@ public class RespondToFriendRequestController implements Observer {
 
     @FXML
     private void initialize() {
-        from.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getId().first().getFullName()));
+        to.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getId().second().getFullName()));
         date.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
 
         requests.setItems(model);
     }
 
     private void initModel() {
-        List<Friendship> friends = service.getReceivedRequests(myUser);
-        model.setAll(friends);
+        List<Friendship> requests = service.getSentPendingRequests(myUser);
+        model.setAll(requests);
     }
 
     @FXML
-    private void acceptFriendRequest() {
+    private void retractFriendRequest() {
         try {
-            Long selectedUserId = requests.getSelectionModel().getSelectedItem().getId().first().getId();
-            service.respondFriendshipRequest(selectedUserId, myUser.getId(), Friendship.Status.ACCEPTED);
-        } catch (MissingEntityException | InvalidRequestException e) {
-            MessageAlert.showErrorMessage(null, e.getMessage());
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            MessageAlert.showErrorMessage(null, "Please select a request first!");
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void rejectFriendRequest() {
-        try {
-            Long selectedUserId = requests.getSelectionModel().getSelectedItem().getId().first().getId();
-            service.respondFriendshipRequest(selectedUserId, myUser.getId(), Friendship.Status.REJECTED);
+            Long selectedUserId = requests.getSelectionModel().getSelectedItem().getId().second().getId();
+            service.retractRequest(myUser,
+                    service.getUser(selectedUserId).orElseThrow(() -> new MissingEntityException("Invalid user!")));
         } catch (MissingEntityException | InvalidRequestException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
             e.printStackTrace();

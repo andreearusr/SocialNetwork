@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane prefHeight="507.0" prefWidth="754.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.MessageSenderController">
+   <children>
+      <TextField fx:id="inputText" layoutX="7.0" layoutY="254.0" prefHeight="186.0" prefWidth="741.0" />
+      <Button layoutX="292.0" layoutY="455.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="38.0" prefWidth="172.0" text="Send" />
+      <TableView fx:id="usersTable" layoutX="14.0" layoutY="14.0" prefHeight="229.0" prefWidth="726.0">
+        <columns>
+          <TableColumn fx:id="firstName" prefWidth="354.0" text="First Name" />
+          <TableColumn fx:id="lastName" prefWidth="371.0" text="Last Name" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

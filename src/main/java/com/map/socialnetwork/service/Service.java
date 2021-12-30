@@ -26,7 +26,7 @@ public class Service extends Observable {
 
     public void addUser(String firstName, String lastName) {
         userRepository.store(new User(firstName, lastName));
-        notifyObservers();
+        notifyObservers(User.class);
     }
 
     public void deleteUser(long id) throws MissingEntityException {
@@ -40,7 +40,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(User.class);
     }
 
     public void updateUser(long id, String newFirstName, String newSecondName) throws MissingEntityException {
@@ -53,7 +53,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(User.class);
     }
 
     public List<User> getUsers() {
@@ -65,7 +65,7 @@ public class Service extends Observable {
     }
 
 
-    public void storeNewMessage(String content, List<Long> to, Long from) {
+    public void sendSingleMessage(String content, List<Long> to, Long from) {
         messageRepository.store(new Message(
                 content,
                 to.stream().map(userRepository::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()),
@@ -74,16 +74,16 @@ public class Service extends Observable {
         ));
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Message.class);
     }
 
-    public void replyMessage(String content, Long from, Long replyId) throws MissingEntityException {
+    public void replyMessage(String content, Long from, Long to, Long replyId) throws MissingEntityException {
         Optional<Message> message = messageRepository.get(replyId);
 
         if (message.isPresent()) {
             messageRepository.store(new Message(
                     content,
-                    message.get().getTo().stream().filter(user -> userRepository.get(user.getId()).isPresent()).collect(Collectors.toList()),
+                    List.of(userRepository.get(to).orElseThrow(() -> new MissingEntityException("User doesn't exist!"))),
                     userRepository.get(from).orElse(User.deletedUser),
                     message.get()
             ));
@@ -92,7 +92,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Message.class);
     }
 
     public void replyAllMessage(String content, Long from, Long replyId) throws MissingEntityException {
@@ -102,11 +102,12 @@ public class Service extends Observable {
             List<User> to = message.get().getTo();
             to.add(message.get().getFrom());
 
-            to = to.stream().filter(user -> userRepository.get(user.getId()).isPresent()).collect(Collectors.toList());
+            to = to.stream().filter(user -> (!user.getId().equals(from) && userRepository.get(user.getId()).isPresent()))
+                    .collect(Collectors.toList());
             messageRepository.store(new Message(
                     content,
                     to,
-                    userRepository.get(from).orElse(User.deletedUser),
+                    userRepository.get(from).orElseThrow(() -> new MissingEntityException("User doesn't exist")),
                     message.get()
             ));
         } else {
@@ -114,7 +115,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Message.class);
     }
 
     public void deleteMessage(Long id) throws MissingEntityException {
@@ -127,7 +128,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Message.class);
     }
 
     public List<Message> getConversation(Long firstUserId, Long secondUserId) throws MissingEntityException {
@@ -159,7 +160,7 @@ public class Service extends Observable {
 
         friendshipRepository.store(new Friendship(firstUser, secondUser));
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
     }
 
     public void respondFriendshipRequest(Long firstUserId, Long secondUserId, Friendship.Status newStatus) throws MissingEntityException, InvalidRequestException {
@@ -183,7 +184,7 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
     }
 
     public List<User> getFriends(User user) {
@@ -208,22 +209,32 @@ public class Service extends Observable {
         }
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
     }
 
     public List<User> getUnrelatedUsers(User user) {
         return friendshipRepository.getUnrelatedUsers(user);
     }
 
-    public void setFriendshipStatus(long firstUserId, long secondUserId, Friendship.Status newStatus) throws MissingEntityException {
-        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
-        friendship.orElseThrow(() -> new MissingEntityException("This request has already been answered or has been retracted!"))
-                .setStatus(newStatus);
+    public void retractRequest(User firstUser, User secondUser) throws MissingEntityException, InvalidRequestException {
+        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUser.getId(), secondUser.getId()));
 
-        friendshipRepository.update(friendship.get());
+        if (friendship.isEmpty()) {
+            throw new MissingEntityException("Request doesn't exist!");
+        }
+        
+        if(friendship.get().getStatus() != Friendship.Status.PENDING) {
+            throw new InvalidRequestException("Can not retract this request!");
+        }
+        
+        friendshipRepository.deleteFriendship(friendship.get());
 
         setChanged();
-        notifyObservers();
+        notifyObservers(Friendship.class);
+    }
+
+    public List<Friendship> getSentPendingRequests(User user) {
+        return friendshipRepository.getSentPendingRequests(user);
     }
 
     public List<Friendship> getAllFriendshipRequests(long id){
