@@ -136,9 +136,22 @@ public class UserController implements Observer {
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();
-        loginController.setService(service);
         loginController.setAuthentication(authentication);
+        loginController.setService(service);
         loginController.setStage(primaryStage);
+    }
+
+    @FXML
+    public void respondToFriendRequest() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("respondToFriendRequest.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+
+        RespondToFriendRequestController respondToFriendRequestController = fxmlLoader.getController();
+        respondToFriendRequestController.setAuthentication(authentication);
+        respondToFriendRequestController.setService(service);
     }
 
     @Override
