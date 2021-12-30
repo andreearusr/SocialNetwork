@@ -45,7 +45,6 @@ public class UserController implements Observer {
     @FXML
     private Label loggedUser;
 
-
     public UserController() {
     }
 
@@ -141,7 +140,7 @@ public class UserController implements Observer {
     }
 
     @FXML
-    public void respondToFriendRequest() throws IOException {
+    public void handleRespondToFriendRequest() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("respondToFriendRequest.fxml"));
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
@@ -151,6 +150,19 @@ public class UserController implements Observer {
         RespondToFriendRequestController respondToFriendRequestController = fxmlLoader.getController();
         respondToFriendRequestController.setAuthentication(authentication);
         respondToFriendRequestController.setService(service);
+    }
+
+    @FXML
+    public void handleRetractFriendRequest() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("retractFriendRequest.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+
+        RetractRequestController retractRequestController = fxmlLoader.getController();
+        retractRequestController.setAuthentication(authentication);
+        retractRequestController.setService(service);
     }
 
     @Override
