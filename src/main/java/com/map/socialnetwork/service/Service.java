@@ -216,17 +216,6 @@ public class Service extends Observable {
         return friendshipRepository.getUnrelatedUsers(user);
     }
 
-    public void setFriendshipStatus(long firstUserId, long secondUserId, Friendship.Status newStatus) throws MissingEntityException {
-        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
-        friendship.orElseThrow(() -> new MissingEntityException("This request has already been answered or has been retracted!"))
-                .setStatus(newStatus);
-
-        friendshipRepository.update(friendship.get());
-
-        setChanged();
-        notifyObservers(Friendship.class);
-    }
-    
     public void retractRequest(User firstUser, User secondUser) throws MissingEntityException, InvalidRequestException {
         Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUser.getId(), secondUser.getId()));
 
