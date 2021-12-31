@@ -1,8 +1,12 @@
-package com.map.socialnetwork.repository;
+package com.map.socialnetwork.repository.userRepository;
 
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.domain.validator.Validator;
 import com.map.socialnetwork.exceptions.ValidatorException;
+import com.map.socialnetwork.repository.AbstractRepository;
+import com.map.socialnetwork.repository.paging.Page;
+import com.map.socialnetwork.repository.paging.PageImpl;
+import com.map.socialnetwork.repository.paging.Pageable;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -107,5 +111,34 @@ public class UserDBRepository extends AbstractRepository<User> implements UserRe
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Page<User> getAll(Pageable<User> pageable) {
+        List<User> users = new ArrayList<>();
+
+        String sql = """
+        SELECT * from users
+        LIMIT (?) OFFSET (?)""";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, pageable.getPageSize());
+            statement.setLong(2, (long) pageable.getPageSize() * (pageable.getPageNumber() - 1));
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+
+                User user = new User(id, firstName, lastName);
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new PageImpl<>(pageable, users);
     }
 }

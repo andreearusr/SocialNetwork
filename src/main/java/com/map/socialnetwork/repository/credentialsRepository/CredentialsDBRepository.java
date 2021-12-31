@@ -1,8 +1,9 @@
-package com.map.socialnetwork.repository;
+package com.map.socialnetwork.repository.credentialsRepository;
 
 import com.map.socialnetwork.domain.Credentials;
 import com.map.socialnetwork.domain.validator.Validator;
 import com.map.socialnetwork.exceptions.ValidatorException;
+import com.map.socialnetwork.repository.AbstractRepository;
 
 import java.sql.*;
 import java.util.Optional;

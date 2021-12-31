@@ -3,7 +3,7 @@ package com.map.socialnetwork.service;
 import com.map.socialnetwork.domain.Credentials;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.ValidatorException;
-import com.map.socialnetwork.repository.CredentialsDBRepository;
+import com.map.socialnetwork.repository.credentialsRepository.CredentialsDBRepository;
 import com.map.socialnetwork.utils.Hashes;
 import lombok.Getter;
 

@@ -6,10 +6,13 @@ import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.domain.validator.*;
-import com.map.socialnetwork.repository.CredentialsDBRepository;
-import com.map.socialnetwork.repository.FriendshipDBRepository;
-import com.map.socialnetwork.repository.MessageDBRepository;
-import com.map.socialnetwork.repository.UserDBRepository;
+import com.map.socialnetwork.repository.credentialsRepository.CredentialsDBRepository;
+import com.map.socialnetwork.repository.friendshipRepository.FriendshipDBRepository;
+import com.map.socialnetwork.repository.friendshipRepository.FriendshipRepository;
+import com.map.socialnetwork.repository.messageRepository.MessageDBRepository;
+import com.map.socialnetwork.repository.messageRepository.MessageRepository;
+import com.map.socialnetwork.repository.userRepository.UserDBRepository;
+import com.map.socialnetwork.repository.userRepository.UserRepository;
 import com.map.socialnetwork.service.Authenticator;
 import com.map.socialnetwork.service.Service;
 import com.map.socialnetwork.service.config.ApplicationContext;
@@ -30,19 +33,15 @@ public class Main extends Application {
         String username = ApplicationContext.getPROPERTIES().getProperty("db.login.username");
         String password = ApplicationContext.getPROPERTIES().getProperty("db.login.password");
 
-        System.out.println(url);
-        System.out.println(username);
-        System.out.println(password);
-
         Validator<Credentials> credentialsValidator = new CredentialsValidator();
         Validator<User> userValidator = new UserValidator();
         Validator<Message> messageValidator = new MessageValidator();
         Validator<Friendship> friendshipValidator = new FriendshipValidator();
 
         CredentialsDBRepository credentialsDBRepository = new CredentialsDBRepository(url, username, password, credentialsValidator);
-        UserDBRepository userDBRepository = new UserDBRepository(url, username, password, userValidator);
-        MessageDBRepository messageDBRepository = new MessageDBRepository(url, username, password, userDBRepository, messageValidator);
-        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository(url, username, password, userDBRepository, friendshipValidator);
+        UserRepository userDBRepository = new UserDBRepository(url, username, password, userValidator);
+        MessageRepository messageDBRepository = new MessageDBRepository(url, username, password, userDBRepository, messageValidator);
+        FriendshipRepository friendshipDBRepository = new FriendshipDBRepository(url, username, password, userDBRepository, friendshipValidator);
         authenticator = new Authenticator(credentialsDBRepository);
         service = new Service(userDBRepository, friendshipDBRepository, messageDBRepository);
 

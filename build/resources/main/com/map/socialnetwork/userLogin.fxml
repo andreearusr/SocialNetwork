@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="488.0" prefWidth="828.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="488.0" prefWidth="828.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserController">
    <children>
       <Label fx:id="loggedUser" alignment="CENTER" layoutX="652.0" layoutY="433.0" prefHeight="38.0" prefWidth="162.0" text="Username" textFill="#123640">
          <font>
@@ -17,7 +17,7 @@
       <Button mnemonicParsing="false" onAction="#handleAddFriend" prefHeight="70.0" prefWidth="262.0" text="Add friend" />
       <Button layoutY="70.0" mnemonicParsing="false" onAction="#handleRemoveFriend" prefHeight="70.0" prefWidth="262.0" text="Remove friend" />
       <Button layoutY="140.0" mnemonicParsing="false" onAction="#handleFriendRequests" prefHeight="70.0" prefWidth="262.0" text="Friendship requests" />
-      <TableView fx:id="friendsTable" layoutX="262.0" prefHeight="418.0" prefWidth="568.0">
+      <TableView fx:id="friendsTable" layoutX="262.0" prefHeight="421.0" prefWidth="568.0">
         <columns>
             <TableColumn fx:id="FirstNameColumn" prefWidth="287.0" text="First Name" />
             <TableColumn fx:id="LastNameColumn" prefWidth="280.0" text="Last Name" />
