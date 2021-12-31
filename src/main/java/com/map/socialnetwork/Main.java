@@ -6,11 +6,11 @@ import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.domain.validator.*;
-import com.map.socialnetwork.repository.CredentialsRepository;
-import com.map.socialnetwork.repository.FriendshipRepository;
-import com.map.socialnetwork.repository.MessageRepository;
-import com.map.socialnetwork.repository.UserRepository;
-import com.map.socialnetwork.service.Authentication;
+import com.map.socialnetwork.repository.CredentialsDBRepository;
+import com.map.socialnetwork.repository.FriendshipDBRepository;
+import com.map.socialnetwork.repository.MessageDBRepository;
+import com.map.socialnetwork.repository.UserDBRepository;
+import com.map.socialnetwork.service.Authenticator;
 import com.map.socialnetwork.service.Service;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +25,7 @@ public class Main extends Application {
     private static final String username = "postgres";
     private static final String password = "Database1";
 
-    private Authentication authentication;
+    private Authenticator authenticator;
     private Service service;
 
     @Override
@@ -35,12 +35,12 @@ public class Main extends Application {
         Validator<Message> messageValidator = new MessageValidator();
         Validator<Friendship> friendshipValidator = new FriendshipValidator();
 
-        CredentialsRepository credentialsRepository = new CredentialsRepository(url, username, password, credentialsValidator);
-        UserRepository userRepository = new UserRepository(url, username, password, userValidator);
-        MessageRepository messageRepository = new MessageRepository(url, username, password, userRepository, messageValidator);
-        FriendshipRepository friendshipRepository = new FriendshipRepository(url, username, password, userRepository, friendshipValidator);
-        authentication = new Authentication(credentialsRepository);
-        service = new Service(userRepository, friendshipRepository, messageRepository);
+        CredentialsDBRepository credentialsDBRepository = new CredentialsDBRepository(url, username, password, credentialsValidator);
+        UserDBRepository userDBRepository = new UserDBRepository(url, username, password, userValidator);
+        MessageDBRepository messageDBRepository = new MessageDBRepository(url, username, password, userDBRepository, messageValidator);
+        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository(url, username, password, userDBRepository, friendshipValidator);
+        authenticator = new Authenticator(credentialsDBRepository);
+        service = new Service(userDBRepository, friendshipDBRepository, messageDBRepository);
 
         initView(primaryStage);
         primaryStage.setResizable(false);
@@ -59,7 +59,7 @@ public class Main extends Application {
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();
-        loginController.setAuthentication(authentication);
+        loginController.setAuthentication(authenticator);
         loginController.setService(service);
         loginController.setStage(primaryStage);
     }

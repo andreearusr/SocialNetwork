@@ -8,9 +8,9 @@ import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.InvalidRequestException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
-import com.map.socialnetwork.repository.FriendshipRepository;
-import com.map.socialnetwork.repository.MessageRepository;
-import com.map.socialnetwork.repository.UserRepository;
+import com.map.socialnetwork.repository.FriendshipDBRepository;
+import com.map.socialnetwork.repository.MessageDBRepository;
+import com.map.socialnetwork.repository.UserDBRepository;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -21,21 +21,21 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class Service extends Observable {
 
-    private UserRepository userRepository;
-    private FriendshipRepository friendshipRepository;
-    private MessageRepository messageRepository;
+    private UserDBRepository userDBRepository;
+    private FriendshipDBRepository friendshipDBRepository;
+    private MessageDBRepository messageDBRepository;
 
     public void addUser(String firstName, String lastName) throws ValidatorException {
-        userRepository.store(new User(firstName, lastName));
+        userDBRepository.store(new User(firstName, lastName));
         notifyObservers(User.class);
     }
 
     public void deleteUser(long id) throws MissingEntityException {
-        Optional<User> userToDelete = userRepository.get(id);
+        Optional<User> userToDelete = userDBRepository.get(id);
 
         if (userToDelete.isPresent()) {
-            userRepository.delete(userToDelete.get());
-            friendshipRepository.deleteFriendshipsRelatedToUser(userToDelete.get());
+            userDBRepository.delete(userToDelete.get());
+            friendshipDBRepository.deleteFriendshipsRelatedToUser(userToDelete.get());
         } else {
             throw new MissingEntityException("User doesn't exist!");
         }
@@ -45,10 +45,10 @@ public class Service extends Observable {
     }
 
     public void updateUser(long id, String newFirstName, String newSecondName) throws MissingEntityException, ValidatorException {
-        Optional<User> userToRemove = userRepository.get(id);
+        Optional<User> userToRemove = userDBRepository.get(id);
 
         if (userToRemove.isPresent()) {
-            userRepository.update(id, new User(newFirstName, newSecondName));
+            userDBRepository.update(id, new User(newFirstName, newSecondName));
         } else {
             throw new MissingEntityException("User doesn't exist!");
         }
@@ -58,19 +58,19 @@ public class Service extends Observable {
     }
 
     public List<User> getUsers() {
-        return userRepository.getAll();
+        return userDBRepository.getAll();
     }
 
     public Optional<User> getUser(long id) {
-        return userRepository.get(id);
+        return userDBRepository.get(id);
     }
 
 
     public void sendSingleMessage(String content, List<Long> to, Long from) throws ValidatorException {
-        messageRepository.store(new Message(
+        messageDBRepository.store(new Message(
                 content,
-                to.stream().map(userRepository::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()),
-                userRepository.get(from).orElse(User.deletedUser),
+                to.stream().map(userDBRepository::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()),
+                userDBRepository.get(from).orElse(User.deletedUser),
                 null
         ));
 
@@ -79,13 +79,13 @@ public class Service extends Observable {
     }
 
     public void replyMessage(String content, Long from, Long to, Long replyId) throws MissingEntityException, ValidatorException {
-        Optional<Message> message = messageRepository.get(replyId);
+        Optional<Message> message = messageDBRepository.get(replyId);
 
         if (message.isPresent()) {
-            messageRepository.store(new Message(
+            messageDBRepository.store(new Message(
                     content,
-                    List.of(userRepository.get(to).orElseThrow(() -> new MissingEntityException("User doesn't exist!"))),
-                    userRepository.get(from).orElse(User.deletedUser),
+                    List.of(userDBRepository.get(to).orElseThrow(() -> new MissingEntityException("User doesn't exist!"))),
+                    userDBRepository.get(from).orElse(User.deletedUser),
                     message.get()
             ));
         } else {
@@ -97,18 +97,18 @@ public class Service extends Observable {
     }
 
     public void replyAllMessage(String content, Long from, Long replyId) throws MissingEntityException, ValidatorException {
-        Optional<Message> message = messageRepository.get(replyId);
+        Optional<Message> message = messageDBRepository.get(replyId);
 
         if (message.isPresent()) {
             List<User> to = message.get().getTo();
             to.add(message.get().getFrom());
 
-            to = to.stream().filter(user -> (!user.getId().equals(from) && userRepository.get(user.getId()).isPresent()))
+            to = to.stream().filter(user -> (!user.getId().equals(from) && userDBRepository.get(user.getId()).isPresent()))
                     .collect(Collectors.toList());
-            messageRepository.store(new Message(
+            messageDBRepository.store(new Message(
                     content,
                     to,
-                    userRepository.get(from).orElseThrow(() -> new MissingEntityException("User doesn't exist")),
+                    userDBRepository.get(from).orElseThrow(() -> new MissingEntityException("User doesn't exist")),
                     message.get()
             ));
         } else {
@@ -120,10 +120,10 @@ public class Service extends Observable {
     }
 
     public void deleteMessage(Long id) throws MissingEntityException {
-        Optional<Message> messageToDelete = messageRepository.get(id);
+        Optional<Message> messageToDelete = messageDBRepository.get(id);
 
         if (messageToDelete.isPresent()) {
-            messageRepository.delete(messageToDelete.get());
+            messageDBRepository.delete(messageToDelete.get());
         } else {
             throw new MissingEntityException("Message doesn't exist!");
         }
@@ -133,8 +133,8 @@ public class Service extends Observable {
     }
 
     public List<Message> getConversation(Long firstUserId, Long secondUserId) throws MissingEntityException {
-        User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
+        User firstUser = userDBRepository.get(firstUserId).orElse(User.deletedUser);
+        User secondUser = userDBRepository.get(secondUserId).orElse(User.deletedUser);
 
         if (firstUser == User.deletedUser) {
             throw new MissingEntityException("First user is missing!");
@@ -144,12 +144,12 @@ public class Service extends Observable {
             throw new MissingEntityException("Second user is missing!");
         }
 
-        return messageRepository.getConversation(firstUser, secondUser);
+        return messageDBRepository.getConversation(firstUser, secondUser);
     }
 
     public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException, ValidatorException {
-        User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
+        User firstUser = userDBRepository.get(firstUserId).orElse(User.deletedUser);
+        User secondUser = userDBRepository.get(secondUserId).orElse(User.deletedUser);
 
         if (firstUser == User.deletedUser) {
             throw new MissingEntityException("First user is missing!");
@@ -159,29 +159,21 @@ public class Service extends Observable {
             throw new MissingEntityException("Second user is missing!");
         }
 
-        friendshipRepository.store(new Friendship(firstUser, secondUser));
+        friendshipDBRepository.store(new Friendship(firstUser, secondUser));
         setChanged();
         notifyObservers(Friendship.class);
     }
 
     public void respondFriendshipRequest(Long firstUserId, Long secondUserId, Friendship.Status newStatus) throws MissingEntityException, InvalidRequestException, ValidatorException {
-        User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
+        User firstUser = userDBRepository.get(firstUserId).orElseThrow(() -> new MissingEntityException("First user is missing!"));
+        User secondUser = userDBRepository.get(secondUserId).orElseThrow(() -> new MissingEntityException("Second user is missing!"));
 
-        if (firstUser == User.deletedUser) {
-            throw new MissingEntityException("First user is missing!");
-        }
-
-        if (secondUser == User.deletedUser) {
-            throw new MissingEntityException("Second user is missing!");
-        }
-
-        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
+        Optional<Friendship> friendship = friendshipDBRepository.get(new Tuple<>(firstUser, secondUser));
 
         if (friendship.isPresent()) {
             Friendship updatedFriendship = friendship.get();
             updatedFriendship.respond(secondUser, newStatus);
-            friendshipRepository.update(updatedFriendship);
+            friendshipDBRepository.update(updatedFriendship);
         }
 
         setChanged();
@@ -189,24 +181,29 @@ public class Service extends Observable {
     }
 
     public List<User> getFriends(User user) {
-        return friendshipRepository.getFriends(user);
+        return friendshipDBRepository.getFriends(user);
     }
 
     public List<Friendship> getReceivedRequests(User user) {
-        return friendshipRepository.getReceivedRequests(user);
+        return friendshipDBRepository.getReceivedRequests(user);
     }
 
-    public void removeFriendship(long firstUserId, long secondUserId) throws MissingEntityException, ValidatorException {
-        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
-        Optional<Friendship> friendshipSwap = friendshipRepository.getFriendship(new Tuple<>(secondUserId, firstUserId));
+    public void removeFriendship(long firstUserId, long secondUserId) throws ValidatorException, MissingEntityException {
+        User firstUser = userDBRepository.get(firstUserId).orElseThrow(() -> new MissingEntityException("First user is missing!"));
+        User secondUser = userDBRepository.get(secondUserId).orElseThrow(() -> new MissingEntityException("Second user is missing!"));
+
+        Optional<Friendship> friendship = friendshipDBRepository.get(new Tuple<>(firstUser, secondUser));
+        Optional<Friendship> friendshipSwap = friendshipDBRepository.get(new Tuple<>(secondUser, firstUser));
 
         if (friendship.isPresent()) {
             friendship.get().setStatus(Friendship.Status.REJECTED);
-            friendshipRepository.update(friendship.get());
+            friendshipDBRepository.update(friendship.get());
         }
         else if (friendshipSwap.isPresent()) {
             friendshipSwap.get().setStatus(Friendship.Status.REJECTED);
-            friendshipRepository.update(friendshipSwap.get());
+            friendshipDBRepository.update(friendshipSwap.get());
+        } else {
+            throw new MissingEntityException("Friendship doesn't exist!");
         }
 
         setChanged();
@@ -214,11 +211,11 @@ public class Service extends Observable {
     }
 
     public List<User> getUnrelatedUsers(User user) {
-        return friendshipRepository.getUnrelatedUsers(user);
+        return friendshipDBRepository.getUnrelatedUsers(user);
     }
 
     public void retractRequest(User firstUser, User secondUser) throws MissingEntityException, InvalidRequestException {
-        Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUser.getId(), secondUser.getId()));
+        Optional<Friendship> friendship = friendshipDBRepository.get(new Tuple<>(firstUser, secondUser));
 
         if (friendship.isEmpty()) {
             throw new MissingEntityException("Request doesn't exist!");
@@ -228,18 +225,18 @@ public class Service extends Observable {
             throw new InvalidRequestException("Can not retract this request!");
         }
         
-        friendshipRepository.deleteFriendship(friendship.get());
+        friendshipDBRepository.delete(friendship.get());
 
         setChanged();
         notifyObservers(Friendship.class);
     }
 
     public List<Friendship> getSentPendingRequests(User user) {
-        return friendshipRepository.getSentPendingRequests(user);
+        return friendshipDBRepository.getSentPendingRequests(user);
     }
 
     public List<Friendship> getAllFriendshipRequests(long id){
-        return friendshipRepository.getAll(id);
+        return friendshipDBRepository.getAll(id);
     }
 }
 
