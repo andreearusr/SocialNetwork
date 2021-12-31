@@ -1,6 +1,11 @@
 package com.map.socialnetwork;
 
 import com.map.socialnetwork.controllers.LoginController;
+import com.map.socialnetwork.domain.Credentials;
+import com.map.socialnetwork.domain.Friendship;
+import com.map.socialnetwork.domain.Message;
+import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.validator.*;
 import com.map.socialnetwork.repository.CredentialsRepository;
 import com.map.socialnetwork.repository.FriendshipRepository;
 import com.map.socialnetwork.repository.MessageRepository;
@@ -25,10 +30,15 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        CredentialsRepository credentialsRepository = new CredentialsRepository(url, username, password);
-        UserRepository userRepository = new UserRepository(url, username, password);
-        MessageRepository messageRepository = new MessageRepository(url, username, password, userRepository);
-        FriendshipRepository friendshipRepository = new FriendshipRepository(url, username, password, userRepository);
+        Validator<Credentials> credentialsValidator = new CredentialsValidator();
+        Validator<User> userValidator = new UserValidator();
+        Validator<Message> messageValidator = new MessageValidator();
+        Validator<Friendship> friendshipValidator = new FriendshipValidator();
+
+        CredentialsRepository credentialsRepository = new CredentialsRepository(url, username, password, credentialsValidator);
+        UserRepository userRepository = new UserRepository(url, username, password, userValidator);
+        MessageRepository messageRepository = new MessageRepository(url, username, password, userRepository, messageValidator);
+        FriendshipRepository friendshipRepository = new FriendshipRepository(url, username, password, userRepository, friendshipValidator);
         authentication = new Authentication(credentialsRepository);
         service = new Service(userRepository, friendshipRepository, messageRepository);
 

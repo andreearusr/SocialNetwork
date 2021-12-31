@@ -4,6 +4,7 @@ import com.map.socialnetwork.Main;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
+import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.service.Authentication;
 import com.map.socialnetwork.service.Service;
 import javafx.collections.FXCollections;
@@ -113,6 +114,8 @@ public class UserController implements Observer {
             service.removeFriendship(firstUserid, secondUserid);
         } catch (NullPointerException nullPointerException) {
             MessageAlert.showErrorMessage(null, "Please select a user first!");
+        } catch (ValidatorException e) {
+            MessageAlert.showErrorMessage(null, e.getMessage());
         }
     }
 

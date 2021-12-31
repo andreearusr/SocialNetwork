@@ -2,6 +2,7 @@ package com.map.socialnetwork.service;
 
 import com.map.socialnetwork.domain.Credentials;
 import com.map.socialnetwork.exceptions.AuthenticationException;
+import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.repository.CredentialsRepository;
 import com.map.socialnetwork.utils.Hashes;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class Authentication {
         userId = null;
     }
 
-    public void addCredentials(Long userId, String username, String password) {
+    public void addCredentials(Long userId, String username, String password) throws ValidatorException {
         credentialsRepository.store(userId, Credentials.of(username, password));
     }
 

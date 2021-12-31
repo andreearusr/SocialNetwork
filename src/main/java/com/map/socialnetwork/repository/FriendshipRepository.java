@@ -3,23 +3,27 @@ package com.map.socialnetwork.repository;
 import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.Tuple;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.validator.Validator;
 import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
+import com.map.socialnetwork.exceptions.ValidatorException;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class FriendshipRepository extends AbstractRepository {
+public class FriendshipRepository extends AbstractRepository<Friendship> {
     UserRepository userRepository;
 
-    public FriendshipRepository(String url, String username, String password, UserRepository userRepository) {
-        super(url, username, password);
+    public FriendshipRepository(String url, String username, String password, UserRepository userRepository,
+                                Validator<Friendship> validator) {
+        super(url, username, password, validator);
         this.userRepository = userRepository;
     }
 
-    public void store(Friendship friendship) throws MissingEntityException, DuplicateEntityException {
+    public void store(Friendship friendship) throws MissingEntityException, DuplicateEntityException, ValidatorException {
+        validator.validate(friendship);
         Tuple<Long, Long> ids = new Tuple<>(friendship.getId().first().getId(), friendship.getId().second().getId());
         Tuple<Long, Long> ids_swapped = new Tuple<>(friendship.getId().second().getId(), friendship.getId().first().getId());
 
@@ -68,7 +72,8 @@ public class FriendshipRepository extends AbstractRepository {
         }
     }
 
-    public void update(Friendship friendship) {
+    public void update(Friendship friendship) throws ValidatorException {
+        validator.validate(friendship);
         String sql = "UPDATE friendships SET status = (?) WHERE first_user = (?) AND second_user = (?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
