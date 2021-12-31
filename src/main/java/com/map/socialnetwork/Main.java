@@ -12,24 +12,30 @@ import com.map.socialnetwork.repository.MessageDBRepository;
 import com.map.socialnetwork.repository.UserDBRepository;
 import com.map.socialnetwork.service.Authenticator;
 import com.map.socialnetwork.service.Service;
+import com.map.socialnetwork.service.config.ApplicationContext;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
 
 public class Main extends Application {
-
-    private static final String url = "jdbc:postgresql://localhost:5432/social_network_v2";
-    private static final String username = "postgres";
-    private static final String password = "Database1";
-
     private Authenticator authenticator;
     private Service service;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        String url = ApplicationContext.getPROPERTIES().getProperty("db.url");
+        String username = ApplicationContext.getPROPERTIES().getProperty("db.login.username");
+        String password = ApplicationContext.getPROPERTIES().getProperty("db.login.password");
+
+        System.out.println(url);
+        System.out.println(username);
+        System.out.println(password);
+
         Validator<Credentials> credentialsValidator = new CredentialsValidator();
         Validator<User> userValidator = new UserValidator();
         Validator<Message> messageValidator = new MessageValidator();
