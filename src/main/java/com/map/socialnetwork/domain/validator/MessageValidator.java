@@ -1,6 +1,5 @@
 package com.map.socialnetwork.domain.validator;
 
-import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.ValidatorException;
