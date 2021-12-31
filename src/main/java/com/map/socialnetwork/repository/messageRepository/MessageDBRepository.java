@@ -1,9 +1,14 @@
-package com.map.socialnetwork.repository;
+package com.map.socialnetwork.repository.messageRepository;
 
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.domain.validator.Validator;
 import com.map.socialnetwork.exceptions.ValidatorException;
+import com.map.socialnetwork.repository.AbstractRepository;
+import com.map.socialnetwork.repository.paging.Page;
+import com.map.socialnetwork.repository.paging.PageImpl;
+import com.map.socialnetwork.repository.paging.Pageable;
+import com.map.socialnetwork.repository.userRepository.UserRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class MessageDBRepository extends AbstractRepository<Message> implements MessageRepository {
-    UserDBRepository userDBRepository;
+    UserRepository userDBRepository;
 
-    public MessageDBRepository(String url, String username, String password, UserDBRepository userDBRepository,
+    public MessageDBRepository(String url, String username, String password, UserRepository userDBRepository,
                                Validator<Message> validator) {
         super(url, username, password, validator);
         this.userDBRepository = userDBRepository;
@@ -155,5 +160,37 @@ public class MessageDBRepository extends AbstractRepository<Message> implements 
         }
 
         return messages;
+    }
+
+    @Override
+    public Page<Message> getConversation(Pageable<Message> pageable, User firstUser, User secondUser) {
+        List<Message> messages = new ArrayList<>();
+
+        String sql = """
+                SELECT m.id from messages m\040
+                inner join users_messages um on m.id = um.message_id
+                WHERE (m."from"=(?) AND um.user_id=(?)) OR (m."from"=(?) AND um.user_id=(?))
+                ORDER BY m.date
+                LIMIT (?) OFFSET(?)
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, firstUser.getId());
+            statement.setLong(2, secondUser.getId());
+            statement.setLong(3, secondUser.getId());
+            statement.setLong(4, firstUser.getId());
+            statement.setLong(5, pageable.getPageSize());
+            statement.setLong(6, (long) pageable.getPageSize() * (pageable.getPageNumber() - 1));
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                get(resultSet.getLong("id")).ifPresent(messages::add);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return new PageImpl<>(pageable, messages);
     }
 }

@@ -8,9 +8,11 @@ import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.InvalidRequestException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
-import com.map.socialnetwork.repository.FriendshipDBRepository;
-import com.map.socialnetwork.repository.MessageDBRepository;
-import com.map.socialnetwork.repository.UserDBRepository;
+import com.map.socialnetwork.repository.friendshipRepository.FriendshipRepository;
+import com.map.socialnetwork.repository.messageRepository.MessageRepository;
+import com.map.socialnetwork.repository.paging.Page;
+import com.map.socialnetwork.repository.paging.Pageable;
+import com.map.socialnetwork.repository.userRepository.UserRepository;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -21,11 +23,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class Service extends Observable {
 
-    private UserDBRepository userDBRepository;
-    private FriendshipDBRepository friendshipDBRepository;
-    private MessageDBRepository messageDBRepository;
+    private UserRepository userDBRepository;
+    private FriendshipRepository friendshipDBRepository;
+    private MessageRepository messageDBRepository;
 
-    public void addUser(String firstName, String lastName) throws ValidatorException {
+    public void addUser(String firstName, String lastName) throws ValidatorException, DuplicateEntityException {
         userDBRepository.store(new User(firstName, lastName));
         notifyObservers(User.class);
     }
@@ -61,12 +63,15 @@ public class Service extends Observable {
         return userDBRepository.getAll();
     }
 
+    public Page<User> getUsers(Pageable<User> pageable) {
+        return userDBRepository.getAll(pageable);
+    }
+
     public Optional<User> getUser(long id) {
         return userDBRepository.get(id);
     }
 
-
-    public void sendSingleMessage(String content, List<Long> to, Long from) throws ValidatorException {
+    public void sendSingleMessage(String content, List<Long> to, Long from) throws ValidatorException, DuplicateEntityException {
         messageDBRepository.store(new Message(
                 content,
                 to.stream().map(userDBRepository::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()),
@@ -78,7 +83,7 @@ public class Service extends Observable {
         notifyObservers(Message.class);
     }
 
-    public void replyMessage(String content, Long from, Long to, Long replyId) throws MissingEntityException, ValidatorException {
+    public void replyMessage(String content, Long from, Long to, Long replyId) throws MissingEntityException, ValidatorException, DuplicateEntityException {
         Optional<Message> message = messageDBRepository.get(replyId);
 
         if (message.isPresent()) {
@@ -96,7 +101,7 @@ public class Service extends Observable {
         notifyObservers(Message.class);
     }
 
-    public void replyAllMessage(String content, Long from, Long replyId) throws MissingEntityException, ValidatorException {
+    public void replyAllMessage(String content, Long from, Long replyId) throws MissingEntityException, ValidatorException, DuplicateEntityException {
         Optional<Message> message = messageDBRepository.get(replyId);
 
         if (message.isPresent()) {
@@ -147,6 +152,21 @@ public class Service extends Observable {
         return messageDBRepository.getConversation(firstUser, secondUser);
     }
 
+    public Page<Message> getConversation(Pageable<Message> pageable, Long firstUserId, Long secondUserId) throws MissingEntityException {
+        User firstUser = userDBRepository.get(firstUserId).orElse(User.deletedUser);
+        User secondUser = userDBRepository.get(secondUserId).orElse(User.deletedUser);
+
+        if (firstUser == User.deletedUser) {
+            throw new MissingEntityException("First user is missing!");
+        }
+
+        if (secondUser == User.deletedUser) {
+            throw new MissingEntityException("Second user is missing!");
+        }
+
+        return messageDBRepository.getConversation(pageable, firstUser, secondUser);
+    }
+
     public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException, ValidatorException {
         User firstUser = userDBRepository.get(firstUserId).orElse(User.deletedUser);
         User secondUser = userDBRepository.get(secondUserId).orElse(User.deletedUser);
@@ -184,8 +204,16 @@ public class Service extends Observable {
         return friendshipDBRepository.getFriends(user);
     }
 
+    public Page<User> getFriends(Pageable<User> pageable, User user) {
+        return friendshipDBRepository.getFriends(pageable, user);
+    }
+
     public List<Friendship> getReceivedRequests(User user) {
         return friendshipDBRepository.getReceivedRequests(user);
+    }
+
+    public Page<Friendship> getReceivedRequests(Pageable<Friendship> pageable, User user) {
+        return friendshipDBRepository.getReceivedRequests(pageable, user);
     }
 
     public void removeFriendship(long firstUserId, long secondUserId) throws ValidatorException, MissingEntityException {
@@ -214,6 +242,10 @@ public class Service extends Observable {
         return friendshipDBRepository.getUnrelatedUsers(user);
     }
 
+    public Page<User> getUnrelatedUsers(Pageable<User> pageable, User user) {
+        return friendshipDBRepository.getUnrelatedUsers(pageable, user);
+    }
+
     public void retractRequest(User firstUser, User secondUser) throws MissingEntityException, InvalidRequestException {
         Optional<Friendship> friendship = friendshipDBRepository.get(new Tuple<>(firstUser, secondUser));
 
@@ -235,8 +267,16 @@ public class Service extends Observable {
         return friendshipDBRepository.getSentPendingRequests(user);
     }
 
+    public Page<Friendship> getSentPendingRequests(Pageable<Friendship> pageable, User user) {
+        return friendshipDBRepository.getSentPendingRequests(pageable, user);
+    }
+
     public List<Friendship> getAllFriendshipRequests(long id){
         return friendshipDBRepository.getAll(id);
+    }
+
+    public Page<Friendship> getAllFriendshipRequests(Pageable<Friendship> pageable, long id){
+        return friendshipDBRepository.getAll(pageable, id);
     }
 }
 

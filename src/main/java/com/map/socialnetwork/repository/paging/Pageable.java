@@ -1,6 +1,6 @@
 package com.map.socialnetwork.repository.paging;
 
-public interface Pageable {
+public interface Pageable<E> {
     int getPageNumber();
     int getPageSize();
 }

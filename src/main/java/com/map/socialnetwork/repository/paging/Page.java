@@ -1,11 +1,13 @@
 package com.map.socialnetwork.repository.paging;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public interface Page<E> {
-    Pageable getPageable();
+    Pageable<E> getPageable();
 
-    Pageable nextPageable();
+    Pageable<E> nextPageable();
 
-    Stream<E> getContent();
+    Pageable<E> previousPageable();
+
+    List<E> getContent();
 }

@@ -9,5 +9,5 @@ public class AbstractRepository<E> {
     protected final String username;
     protected final String password;
 
-    Validator<E> validator;
+    protected Validator<E> validator;
 }

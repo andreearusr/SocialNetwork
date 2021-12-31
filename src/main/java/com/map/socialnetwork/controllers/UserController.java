@@ -5,14 +5,18 @@ import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
+import com.map.socialnetwork.repository.paging.Page;
+import com.map.socialnetwork.repository.paging.PageableImpl;
 import com.map.socialnetwork.service.Authenticator;
 import com.map.socialnetwork.service.Service;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,8 +27,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 
 public class UserController implements Observer {
@@ -34,6 +36,8 @@ public class UserController implements Observer {
 
     private User myUser;
     private final ObservableList<User> model = FXCollections.observableArrayList();
+    private Page<User> firstLoadedPage;
+    private Page<User> secondLoadedPage;
 
     @FXML
     private TableColumn<User, String> FirstNameColumn;
@@ -80,15 +84,45 @@ public class UserController implements Observer {
     private void initialize() {
         FirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         LastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-
         friendsTable.setItems(model);
+
+        Platform.runLater(() -> {
+            ScrollBar tvScrollBar = (ScrollBar) friendsTable.lookup(".scroll-bar:vertical");
+            tvScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                if ((Double)newValue == 0.0) {
+                    if (firstLoadedPage.getPageable().getPageNumber() > 1) {
+                        secondLoadedPage = firstLoadedPage;
+                        firstLoadedPage = service.getFriends(firstLoadedPage.previousPageable(), myUser);
+                        setModel();
+                    }
+                } else if ((Double)newValue == 1.0) {
+                    if (secondLoadedPage.getContent().size() == secondLoadedPage.getPageable().getPageSize()) {
+                        Page<User> newUsers = service.getFriends(secondLoadedPage.nextPageable(), myUser);
+
+                        if (!newUsers.getContent().isEmpty()) {
+                            firstLoadedPage = secondLoadedPage;
+                            secondLoadedPage = newUsers;
+                            setModel();
+                        }
+                    }
+                }
+            });
+        });
     }
 
     private void initModel() {
-        Iterable<User> friends = service.getFriends(myUser);
-        List<User> friendsList = StreamSupport.stream(friends.spliterator(), false)
-                .collect(Collectors.toList());
-        model.setAll(friendsList);
+        firstLoadedPage = service.getFriends(new PageableImpl<>(1, 20), myUser);
+        secondLoadedPage = service.getFriends(new PageableImpl<>(2, 20), myUser);
+
+        setModel();
+    }
+
+    private void setModel() {
+        List<User> loadedUsers = firstLoadedPage.getContent();
+        loadedUsers.addAll(secondLoadedPage.getContent());
+        model.clear();
+
+        model.setAll(loadedUsers);
     }
 
     @FXML

@@ -4,7 +4,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-
 <AnchorPane prefHeight="331.0" prefWidth="615.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.AddFriendController">
     <children>
         <TableView fx:id="tableUsers" layoutX="21.0" layoutY="8.0" prefHeight="249.0" prefWidth="575.0">
