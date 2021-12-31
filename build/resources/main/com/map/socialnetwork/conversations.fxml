@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="693.0" prefWidth="1415.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ConversationsController">
+<AnchorPane prefHeight="693.0" prefWidth="1415.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ConversationsController">
    <children>
       <TableView fx:id="usersTable" prefHeight="691.0" prefWidth="200.0">
         <columns>
