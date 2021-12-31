@@ -2,21 +2,25 @@ package com.map.socialnetwork.repository;
 
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.validator.Validator;
+import com.map.socialnetwork.exceptions.ValidatorException;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MessageRepository extends AbstractRepository {
+public class MessageRepository extends AbstractRepository<Message> {
     UserRepository userRepository;
 
-    public MessageRepository(String url, String username, String password, UserRepository userRepository) {
-        super(url, username, password);
+    public MessageRepository(String url, String username, String password, UserRepository userRepository,
+                             Validator<Message> validator) {
+        super(url, username, password, validator);
         this.userRepository = userRepository;
     }
 
-    public void store(Message message) {
+    public void store(Message message) throws ValidatorException {
+        validator.validate(message);
         String saveMessage = "insert into messages (\"from\", reply, body, date ) values (?, ?, ?, ?)";
         String saveReceiver = "insert into users_messages (user_id, message_id) values (?, ?)";
 

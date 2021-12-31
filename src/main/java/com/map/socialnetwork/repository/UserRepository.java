@@ -1,19 +1,23 @@
 package com.map.socialnetwork.repository;
 
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.validator.Validator;
+import com.map.socialnetwork.exceptions.ValidatorException;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepository extends AbstractRepository {
+public class UserRepository extends AbstractRepository<User> {
 
-    public UserRepository(String url, String username, String password) {
-        super(url, username, password);
+    public UserRepository(String url, String username, String password, Validator<User> validator) {
+        super(url, username, password, validator);
     }
 
-    public void store(User user) {
+    public void store(User user) throws ValidatorException {
+        validator.validate(user);
+
         String sql = """
                 insert into users(first_name, last_name ) values (?, ?)""";
 
@@ -90,7 +94,8 @@ public class UserRepository extends AbstractRepository {
         return users;
     }
 
-    public void update(Long id, User newUser) {
+    public void update(Long id, User newUser) throws ValidatorException {
+        validator.validate(newUser);
         String sql = "UPDATE users SET first_name = (?), last_name = (?) WHERE id = (?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);

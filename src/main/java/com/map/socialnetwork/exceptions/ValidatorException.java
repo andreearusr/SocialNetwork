@@ -3,7 +3,7 @@ package com.map.socialnetwork.exceptions;
 /**
  * The type Validator exception.
  */
-public class ValidatorException extends RuntimeException {
+public class ValidatorException extends Exception {
     /**
      * Instantiates a new Validator exception.
      *

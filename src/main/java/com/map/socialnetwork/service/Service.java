@@ -7,6 +7,7 @@ import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.InvalidRequestException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
+import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.repository.FriendshipRepository;
 import com.map.socialnetwork.repository.MessageRepository;
 import com.map.socialnetwork.repository.UserRepository;
@@ -24,7 +25,7 @@ public class Service extends Observable {
     private FriendshipRepository friendshipRepository;
     private MessageRepository messageRepository;
 
-    public void addUser(String firstName, String lastName) {
+    public void addUser(String firstName, String lastName) throws ValidatorException {
         userRepository.store(new User(firstName, lastName));
         notifyObservers(User.class);
     }
@@ -43,7 +44,7 @@ public class Service extends Observable {
         notifyObservers(User.class);
     }
 
-    public void updateUser(long id, String newFirstName, String newSecondName) throws MissingEntityException {
+    public void updateUser(long id, String newFirstName, String newSecondName) throws MissingEntityException, ValidatorException {
         Optional<User> userToRemove = userRepository.get(id);
 
         if (userToRemove.isPresent()) {
@@ -65,7 +66,7 @@ public class Service extends Observable {
     }
 
 
-    public void sendSingleMessage(String content, List<Long> to, Long from) {
+    public void sendSingleMessage(String content, List<Long> to, Long from) throws ValidatorException {
         messageRepository.store(new Message(
                 content,
                 to.stream().map(userRepository::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()),
@@ -77,7 +78,7 @@ public class Service extends Observable {
         notifyObservers(Message.class);
     }
 
-    public void replyMessage(String content, Long from, Long to, Long replyId) throws MissingEntityException {
+    public void replyMessage(String content, Long from, Long to, Long replyId) throws MissingEntityException, ValidatorException {
         Optional<Message> message = messageRepository.get(replyId);
 
         if (message.isPresent()) {
@@ -95,7 +96,7 @@ public class Service extends Observable {
         notifyObservers(Message.class);
     }
 
-    public void replyAllMessage(String content, Long from, Long replyId) throws MissingEntityException {
+    public void replyAllMessage(String content, Long from, Long replyId) throws MissingEntityException, ValidatorException {
         Optional<Message> message = messageRepository.get(replyId);
 
         if (message.isPresent()) {
@@ -146,7 +147,7 @@ public class Service extends Observable {
         return messageRepository.getConversation(firstUser, secondUser);
     }
 
-    public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException {
+    public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException, ValidatorException {
         User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
         User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
 
@@ -163,7 +164,7 @@ public class Service extends Observable {
         notifyObservers(Friendship.class);
     }
 
-    public void respondFriendshipRequest(Long firstUserId, Long secondUserId, Friendship.Status newStatus) throws MissingEntityException, InvalidRequestException {
+    public void respondFriendshipRequest(Long firstUserId, Long secondUserId, Friendship.Status newStatus) throws MissingEntityException, InvalidRequestException, ValidatorException {
         User firstUser = userRepository.get(firstUserId).orElse(User.deletedUser);
         User secondUser = userRepository.get(secondUserId).orElse(User.deletedUser);
 
@@ -195,7 +196,7 @@ public class Service extends Observable {
         return friendshipRepository.getReceivedRequests(user);
     }
 
-    public void removeFriendship(long firstUserId, long secondUserId) throws MissingEntityException {
+    public void removeFriendship(long firstUserId, long secondUserId) throws MissingEntityException, ValidatorException {
         Optional<Friendship> friendship = friendshipRepository.getFriendship(new Tuple<>(firstUserId, secondUserId));
         Optional<Friendship> friendshipSwap = friendshipRepository.getFriendship(new Tuple<>(secondUserId, firstUserId));
 
