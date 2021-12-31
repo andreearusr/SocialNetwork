@@ -4,7 +4,8 @@ import com.map.socialnetwork.Main;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
-import com.map.socialnetwork.service.Authentication;
+import com.map.socialnetwork.exceptions.ValidatorException;
+import com.map.socialnetwork.service.Authenticator;
 import com.map.socialnetwork.service.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,7 +28,7 @@ import java.util.stream.StreamSupport;
 
 
 public class UserController implements Observer {
-    private Authentication authentication;
+    private Authenticator authenticator;
     private Service service;
     private Stage primaryStage;
 
@@ -50,7 +51,7 @@ public class UserController implements Observer {
         this.service = service;
         this.service.addObserver(this);
 
-        Optional<User> user = service.getUser(authentication.getUserId());
+        Optional<User> user = service.getUser(authenticator.getUserId());
 
         if (user.isEmpty()) {
             handleLogout();
@@ -62,8 +63,8 @@ public class UserController implements Observer {
         initModel();
     }
 
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
+    public void setAuthentication(Authenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     public void setStage(Stage primaryStage) {
@@ -108,11 +109,13 @@ public class UserController implements Observer {
     @FXML
     private void handleRemoveFriend() throws MissingEntityException {
         try {
-            long firstUserid = authentication.getUserId();
+            long firstUserid = authenticator.getUserId();
             long secondUserid = friendsTable.getSelectionModel().getSelectedItem().getId();
             service.removeFriendship(firstUserid, secondUserid);
         } catch (NullPointerException nullPointerException) {
             MessageAlert.showErrorMessage(null, "Please select a user first!");
+        } catch (ValidatorException e) {
+            MessageAlert.showErrorMessage(null, e.getMessage());
         }
     }
 
@@ -136,14 +139,14 @@ public class UserController implements Observer {
 
     @FXML
     private void handleLogout() throws AuthenticationException, IOException {
-        authentication.logOut();
+        authenticator.logOut();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setTitle("Meta");
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();
-        loginController.setAuthentication(authentication);
+        loginController.setAuthentication(authenticator);
         loginController.setService(service);
         loginController.setStage(primaryStage);
     }

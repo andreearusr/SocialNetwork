@@ -3,6 +3,7 @@ package com.map.socialnetwork.controllers;
 import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.MissingEntityException;
+import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.service.Service;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -129,13 +130,18 @@ public class ConversationsController implements Observer {
         }
 
         if (messages.getSelectionModel().isEmpty()) {
-            service.sendSingleMessage(inputMessage.getText(), List.of(selectedUser.get(0).getId()), myUser.getId());
+            try {
+                service.sendSingleMessage(inputMessage.getText(), List.of(selectedUser.get(0).getId()), myUser.getId());
+            } catch (ValidatorException e) {
+                MessageAlert.showErrorMessage(null, e.getMessage());
+                e.printStackTrace();
+            }
         } else {
             if (!replyAll.isSelected()) {
                 try {
                     service.replyMessage(inputMessage.getText(), myUser.getId(), selectedUser.get(0).getId(),
                             messages.getSelectionModel().getSelectedItem().getId());
-                } catch (MissingEntityException e) {
+                } catch (MissingEntityException | ValidatorException e) {
                     MessageAlert.showErrorMessage(null, e.getMessage());
                     e.printStackTrace();
                 }
@@ -143,7 +149,7 @@ public class ConversationsController implements Observer {
                 try {
                     service.replyAllMessage(inputMessage.getText(), myUser.getId(), messages.getSelectionModel()
                             .getSelectedItem().getId());
-                } catch (MissingEntityException e) {
+                } catch (MissingEntityException | ValidatorException e) {
                     MessageAlert.showErrorMessage(null, e.getMessage());
                     e.printStackTrace();
                 }

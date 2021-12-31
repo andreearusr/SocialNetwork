@@ -1,13 +1,15 @@
 package com.map.socialnetwork.repository;
 
 import com.map.socialnetwork.domain.Credentials;
+import com.map.socialnetwork.domain.validator.Validator;
+import com.map.socialnetwork.exceptions.ValidatorException;
 
 import java.sql.*;
 import java.util.Optional;
 
-public class CredentialsRepository extends AbstractRepository {
-    public CredentialsRepository(String url, String username, String password) {
-        super(url, username, password);
+public class CredentialsDBRepository extends AbstractRepository<Credentials> {
+    public CredentialsDBRepository(String url, String username, String password, Validator<Credentials> validator) {
+        super(url, username, password, validator);
     }
 
     public Optional<Long> getId(String user) {
@@ -52,7 +54,8 @@ public class CredentialsRepository extends AbstractRepository {
         return null;
     }
 
-    public void store(Long userId, Credentials credentials) {
+    public void store(Long userId, Credentials credentials) throws ValidatorException {
+        validator.validate(credentials);
         String sql = "insert into credentials (id, username, password) values (?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);

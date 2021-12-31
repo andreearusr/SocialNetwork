@@ -2,18 +2,19 @@ package com.map.socialnetwork.service;
 
 import com.map.socialnetwork.domain.Credentials;
 import com.map.socialnetwork.exceptions.AuthenticationException;
-import com.map.socialnetwork.repository.CredentialsRepository;
+import com.map.socialnetwork.exceptions.ValidatorException;
+import com.map.socialnetwork.repository.CredentialsDBRepository;
 import com.map.socialnetwork.utils.Hashes;
 import lombok.Getter;
 
 import java.util.Objects;
 import java.util.Optional;
 
-public class Authentication {
-    private final CredentialsRepository credentialsRepository;
+public class Authenticator {
+    private final CredentialsDBRepository credentialsDBRepository;
 
-    public Authentication(CredentialsRepository credentialsRepository) {
-        this.credentialsRepository = credentialsRepository;
+    public Authenticator(CredentialsDBRepository credentialsDBRepository) {
+        this.credentialsDBRepository = credentialsDBRepository;
     }
 
     @Getter
@@ -24,13 +25,13 @@ public class Authentication {
             throw new AuthenticationException("Already logged in!");
         }
 
-        Optional<Long> id = credentialsRepository.getId(username);
+        Optional<Long> id = credentialsDBRepository.getId(username);
 
         if (id.isEmpty()) {
             throw new AuthenticationException("Wrong username or password!");
         }
 
-        if (Objects.equals(credentialsRepository.getPassword(id.get()), Hashes.MD5(password))) {
+        if (Objects.equals(credentialsDBRepository.getPassword(id.get()), Hashes.MD5(password))) {
             userId = id.get();
         } else {
             throw new AuthenticationException("Wrong username or password!");
@@ -47,8 +48,8 @@ public class Authentication {
         userId = null;
     }
 
-    public void addCredentials(Long userId, String username, String password) {
-        credentialsRepository.store(userId, Credentials.of(username, password));
+    public void addCredentials(Long userId, String username, String password) throws ValidatorException {
+        credentialsDBRepository.store(userId, Credentials.of(username, password));
     }
 
     public void changePassword(String newPassword) throws AuthenticationException {
@@ -56,7 +57,7 @@ public class Authentication {
             throw new AuthenticationException("You are not logged in!");
         }
 
-        credentialsRepository.update(userId, Hashes.MD5(newPassword));
+        credentialsDBRepository.update(userId, Hashes.MD5(newPassword));
     }
 
     public void deleteCredentials() throws AuthenticationException {
@@ -64,6 +65,6 @@ public class Authentication {
             throw new AuthenticationException("You are not logged in!");
         }
 
-        credentialsRepository.delete(userId);
+        credentialsDBRepository.delete(userId);
     }
 }

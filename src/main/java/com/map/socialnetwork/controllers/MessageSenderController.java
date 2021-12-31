@@ -2,6 +2,7 @@ package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.domain.Entity;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.service.Service;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -77,8 +78,13 @@ public class MessageSenderController implements Observer {
             return;
         }
 
-        service.sendSingleMessage(inputText.getText(), usersTable.getSelectionModel().getSelectedItems().stream()
-                .map(Entity::getId)
-                .collect(Collectors.toList()), myUser.getId());
+        try {
+            service.sendSingleMessage(inputText.getText(), usersTable.getSelectionModel().getSelectedItems().stream()
+                    .map(Entity::getId)
+                    .collect(Collectors.toList()), myUser.getId());
+        } catch (ValidatorException e) {
+            MessageAlert.showErrorMessage(null, e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

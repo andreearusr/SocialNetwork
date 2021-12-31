@@ -4,6 +4,7 @@ import com.map.socialnetwork.domain.Friendship;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.InvalidRequestException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
+import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.service.Service;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -66,7 +67,7 @@ public class RespondToFriendRequestController implements Observer {
         try {
             Long selectedUserId = requests.getSelectionModel().getSelectedItem().getId().first().getId();
             service.respondFriendshipRequest(selectedUserId, myUser.getId(), Friendship.Status.ACCEPTED);
-        } catch (MissingEntityException | InvalidRequestException e) {
+        } catch (MissingEntityException | InvalidRequestException | ValidatorException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
             e.printStackTrace();
         } catch (NullPointerException e) {
@@ -80,7 +81,7 @@ public class RespondToFriendRequestController implements Observer {
         try {
             Long selectedUserId = requests.getSelectionModel().getSelectedItem().getId().first().getId();
             service.respondFriendshipRequest(selectedUserId, myUser.getId(), Friendship.Status.REJECTED);
-        } catch (MissingEntityException | InvalidRequestException e) {
+        } catch (MissingEntityException | InvalidRequestException | ValidatorException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
             e.printStackTrace();
         } catch (NullPointerException e) {
