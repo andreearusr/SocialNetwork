@@ -2,7 +2,7 @@ package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
 import com.map.socialnetwork.exceptions.AuthenticationException;
-import com.map.socialnetwork.service.Authentication;
+import com.map.socialnetwork.service.Authenticator;
 import com.map.socialnetwork.service.Service;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class LoginController {
     private Service service;
-    private Authentication authentication;
+    private Authenticator authenticator;
     private Stage primaryStage;
 
     @FXML
@@ -33,8 +33,8 @@ public class LoginController {
         this.service = service;
     }
 
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
+    public void setAuthentication(Authenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     public void setStage(Stage primaryStage) {
@@ -43,7 +43,7 @@ public class LoginController {
 
     private void tryLogin(String username, String password) {
         try {
-            authentication.logIn(username, password);
+            authenticator.logIn(username, password);
             changeScene();
         } catch (AuthenticationException | IOException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
@@ -57,7 +57,7 @@ public class LoginController {
         primaryStage.setScene(scene);
 
         UserController userController = fxmlLoader.getController();
-        userController.setAuthentication(authentication);
+        userController.setAuthentication(authenticator);
         userController.setService(service);
         userController.setStage(primaryStage);
     }

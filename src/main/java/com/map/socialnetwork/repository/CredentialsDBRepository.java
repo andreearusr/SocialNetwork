@@ -7,8 +7,8 @@ import com.map.socialnetwork.exceptions.ValidatorException;
 import java.sql.*;
 import java.util.Optional;
 
-public class CredentialsRepository extends AbstractRepository<Credentials> {
-    public CredentialsRepository(String url, String username, String password, Validator<Credentials> validator) {
+public class CredentialsDBRepository extends AbstractRepository<Credentials> {
+    public CredentialsDBRepository(String url, String username, String password, Validator<Credentials> validator) {
         super(url, username, password, validator);
     }
 
