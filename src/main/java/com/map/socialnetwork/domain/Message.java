@@ -17,7 +17,7 @@ public class Message extends Entity<Long> {
     private final String message;
     private final List<User> to;
     private final User from;
-    private final Timestamp time;
+    private final Timestamp timestamp;
     private final Message reply;
 
     public Message(Long id, String message, List<User> to, User from, Message reply) {
@@ -25,16 +25,16 @@ public class Message extends Entity<Long> {
         this.message = message;
         this.to = to;
         this.from = from;
-        this.time = Timestamp.valueOf(LocalDateTime.now());
+        this.timestamp = Timestamp.valueOf(LocalDateTime.now());
         this.reply = reply;
     }
 
-    public Message(Long id, String message, List<User> to, User from, Timestamp time, Message reply) {
+    public Message(Long id, String message, List<User> to, User from, Timestamp timestamp, Message reply) {
         super(id);
         this.message = message;
         this.to = to;
         this.from = from;
-        this.time = time;
+        this.timestamp = timestamp;
         this.reply = reply;
     }
 
@@ -43,7 +43,7 @@ public class Message extends Entity<Long> {
         this.message = message;
         this.to = to;
         this.from = from;
-        this.time = Timestamp.valueOf(LocalDateTime.now());
+        this.timestamp = Timestamp.valueOf(LocalDateTime.now());
         this.reply = reply;
     }
 

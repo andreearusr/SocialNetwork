@@ -14,7 +14,14 @@ import com.map.socialnetwork.repository.paging.Page;
 import com.map.socialnetwork.repository.paging.Pageable;
 import com.map.socialnetwork.repository.userRepository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Observable;
 import java.util.Optional;
@@ -138,46 +145,22 @@ public class Service extends Observable {
     }
 
     public List<Message> getConversation(Long firstUserId, Long secondUserId) throws MissingEntityException {
-        User firstUser = userDBRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = userDBRepository.get(secondUserId).orElse(User.deletedUser);
-
-        if (firstUser == User.deletedUser) {
-            throw new MissingEntityException("First user is missing!");
-        }
-
-        if (secondUser == User.deletedUser) {
-            throw new MissingEntityException("Second user is missing!");
-        }
+        User firstUser = userDBRepository.get(firstUserId).orElseThrow(() -> new MissingEntityException("First user is missing!"));
+        User secondUser = userDBRepository.get(secondUserId).orElseThrow(() -> new MissingEntityException("Second user is missing!"));
 
         return messageDBRepository.getConversation(firstUser, secondUser);
     }
 
     public Page<Message> getConversation(Pageable<Message> pageable, Long firstUserId, Long secondUserId) throws MissingEntityException {
-        User firstUser = userDBRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = userDBRepository.get(secondUserId).orElse(User.deletedUser);
-
-        if (firstUser == User.deletedUser) {
-            throw new MissingEntityException("First user is missing!");
-        }
-
-        if (secondUser == User.deletedUser) {
-            throw new MissingEntityException("Second user is missing!");
-        }
+        User firstUser = userDBRepository.get(firstUserId).orElseThrow(() -> new MissingEntityException("First user is missing!"));
+        User secondUser = userDBRepository.get(secondUserId).orElseThrow(() -> new MissingEntityException("Second user is missing!"));
 
         return messageDBRepository.getConversation(pageable, firstUser, secondUser);
     }
 
     public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException, ValidatorException {
-        User firstUser = userDBRepository.get(firstUserId).orElse(User.deletedUser);
-        User secondUser = userDBRepository.get(secondUserId).orElse(User.deletedUser);
-
-        if (firstUser == User.deletedUser) {
-            throw new MissingEntityException("First user is missing!");
-        }
-
-        if (secondUser == User.deletedUser) {
-            throw new MissingEntityException("Second user is missing!");
-        }
+        User firstUser = userDBRepository.get(firstUserId).orElseThrow(() -> new MissingEntityException("First user is missing!"));
+        User secondUser = userDBRepository.get(secondUserId).orElseThrow(() -> new MissingEntityException("Second user is missing!"));
 
         friendshipDBRepository.store(new Friendship(firstUser, secondUser));
         setChanged();
@@ -277,6 +260,82 @@ public class Service extends Observable {
 
     public Page<Friendship> getAllFriendshipRequests(Pageable<Friendship> pageable, long id){
         return friendshipDBRepository.getAll(pageable, id);
+    }
+
+    public void saveConversation(User firstUser, User secondUser, Timestamp start, Timestamp end) throws IOException {
+        List<Message> messages = messageDBRepository.getConversationFromTimeSpan(
+                firstUser, secondUser, start, end
+        );
+
+        StringBuilder body = new StringBuilder();
+
+        for (Message message : messages) {
+            body.append("New message from: ").append(secondUser.getFullName()).append("\nContent: \n\"").append(message.getMessage())
+                            .append("\"\n").append("Time: ").append(message.getTimestamp()).append("\n\n");
+        }
+
+        saveTextToPdf(body.toString());
+    }
+
+    public void saveActivity(User user, Timestamp start, Timestamp end) throws IOException {
+        List<Message> messages = messageDBRepository.getActivity(user, start, end);
+        List<Friendship> friendships = friendshipDBRepository.getActivity(user, start, end);
+
+        StringBuilder body = new StringBuilder();
+
+        for (Message message : messages) {
+            body.append("New message from: ").append(message.getFrom().getFullName()).append("\nContent: \n\"")
+                    .append(message.getMessage()).append("\"\n").append("Time: ").append(message.getTimestamp()).append("\n\n");
+        }
+
+        for (Friendship friendship : friendships) {
+            User friend = (friendship.getId().first().getId().equals(user.getId())) ?
+                    friendship.getId().second() : friendship.getId().first();
+
+            body.append("You became friend with ").append(friend.getFullName()).append(" on ")
+                    .append(friendship.getTimestamp()).append("\n");
+        }
+
+        saveTextToPdf(body.toString());
+    }
+
+    private void saveTextToPdf(String text) throws IOException {
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage();
+        document.addPage(page);
+
+        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+        contentStream.setFont(PDType1Font.TIMES_BOLD, 20);
+        contentStream.beginText();
+        contentStream.newLineAtOffset(25, 700);
+        contentStream.setLeading(14.5f);
+        List<String> chunks = List.of(text.split("\n"));
+
+        for (int index = 0, availableRows = 25; index < chunks.size(); ++index, --availableRows) {
+            if (availableRows == 0) {
+                availableRows = 25;
+                contentStream.endText();
+                contentStream.close();
+                page = new PDPage();
+                document.addPage(page);
+                contentStream = new PDPageContentStream(document, page);
+                contentStream.setFont(PDType1Font.TIMES_BOLD, 20);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(25, 700);
+                contentStream.setLeading(14.5f);
+            }
+
+            contentStream.showText(chunks.get(index));
+            contentStream.newLine();
+            contentStream.newLine();
+        }
+
+        contentStream.endText();
+        contentStream.close();
+
+        document.save("report-" + LocalDateTime.now() + ".pdf");
+        document.close();
     }
 }
 

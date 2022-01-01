@@ -236,4 +236,17 @@ public class UserController implements Observer {
         messageSenderController.setUser(myUser);
         messageSenderController.setService(service);
     }
+
+    @FXML
+    private void handleReports() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("reports.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+
+        ReportsController reportsController = fxmlLoader.getController();
+        reportsController.setUser(myUser);
+        reportsController.setService(service);
+    }
 }
