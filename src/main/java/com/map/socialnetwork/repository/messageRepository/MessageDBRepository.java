@@ -36,7 +36,7 @@ public class MessageDBRepository extends AbstractRepository<Message> implements 
             ps1.setLong(1, message.getFrom().getId());
             ps1.setLong(2, message.getReply() == null ? 0 : message.getReply().getId());
             ps1.setString(3, message.getMessage());
-            ps1.setTimestamp(4, message.getTime());
+            ps1.setTimestamp(4, message.getTimestamp());
             ps1.executeUpdate();
 
             try (ResultSet generatedKeys = ps1.getGeneratedKeys()) {
@@ -192,5 +192,62 @@ public class MessageDBRepository extends AbstractRepository<Message> implements 
         }
 
         return new PageImpl<>(pageable, messages);
+    }
+
+    public List<Message> getConversationFromTimeSpan(User firstUser, User secondUser, Timestamp start, Timestamp end) {
+        List<Message> messages = new ArrayList<>();
+
+        String sql = """
+                SELECT m.id from messages m\040
+                inner join users_messages um on m.id = um.message_id
+                WHERE (m."from"=(?) AND um.user_id=(?))
+                AND (m.date between (?) AND (?))
+                ORDER BY m.date
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, secondUser.getId());
+            statement.setLong(2, firstUser.getId());
+            statement.setTimestamp(3, start);
+            statement.setTimestamp(4, end);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                get(resultSet.getLong("id")).ifPresent(messages::add);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return messages;
+    }
+
+    public List<Message> getActivity(User user, Timestamp start, Timestamp end) {
+        List<Message> messages = new ArrayList<>();
+
+        String sql = """
+                SELECT m.id from messages m\040
+                inner join users_messages um on m.id = um.message_id
+                WHERE um.user_id=(?)
+                AND (m.date between (?) AND (?))
+                ORDER BY m.date
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, user.getId());
+            statement.setTimestamp(2, start);
+            statement.setTimestamp(3, end);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                get(resultSet.getLong("id")).ifPresent(messages::add);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return messages;
     }
 }

@@ -8,6 +8,8 @@ module com.map.socialnetwork {
     requires javafx.graphics;
     requires java.sql;
     requires lombok;
+    requires org.apache.pdfbox;
+    requires org.apache.fontbox;
 
     opens com.map.socialnetwork to javafx.fxml;
     exports com.map.socialnetwork;

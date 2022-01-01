@@ -438,4 +438,43 @@ public class FriendshipDBRepository extends AbstractRepository<Friendship> imple
 
         return new PageImpl<>(pageable, unrelatedUsers);
     }
+
+    public List<Friendship> getActivity(User user, Timestamp start, Timestamp end) {
+        List<Friendship> friendships = new ArrayList<>();
+        String sql = """
+                SELECT first_user, second_user, date from friendships WHERE (first_user = (?) OR second_user = (?))
+                AND status='ACCEPTED' AND (date BETWEEN (?) AND (?))
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, user.getId());
+            ps.setLong(2, user.getId());
+            ps.setTimestamp(3, start);
+            ps.setTimestamp(4, end);
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                long firstUserId = resultSet.getLong(1);
+                long secondUserId = resultSet.getLong(2);
+                Timestamp date = resultSet.getTimestamp(3);
+
+                Optional<User> firstUser = userDBRepository.get(firstUserId);
+                Optional<User> secondUser = userDBRepository.get(secondUserId);
+
+                if (firstUser.isEmpty() || secondUser.isEmpty()) {
+                    continue;
+                }
+
+                friendships.add(new Friendship(new Tuple<>(
+                        firstUser.get(),
+                        secondUser.get()
+                ), date, Friendship.Status.ACCEPTED));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return friendships;
+    }
 }

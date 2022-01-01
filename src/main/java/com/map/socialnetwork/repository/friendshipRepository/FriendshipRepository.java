@@ -6,6 +6,7 @@ import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.repository.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface FriendshipRepository extends Repository<Tuple<User, User>, Friendship>, FriendshipPagingRepository {
@@ -16,4 +17,5 @@ public interface FriendshipRepository extends Repository<Tuple<User, User>, Frie
     List<Friendship> getSentPendingRequests(User user);
     List<User> getUnrelatedUsers(User user);
     List<Friendship> getAll(long id);
+    List<Friendship> getActivity(User user, Timestamp start, Timestamp end);
 }
