@@ -162,6 +162,32 @@ public class MessageDBRepository extends AbstractRepository<Message> implements 
         return messages;
     }
 
+    public List<Message> getReceivedMessages(long id) {
+        List<Message> messages = new ArrayList<>();
+
+        String sql = """
+                SELECT m.id from messages m
+                inner join users_messages um on m.id = um.message_id
+                WHERE um.user_id=(?) 
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                get(resultSet.getLong("id")).ifPresent(messages::add);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return messages;
+
+    }
+
+
     @Override
     public Page<Message> getConversation(Pageable<Message> pageable, User firstUser, User secondUser) {
         List<Message> messages = new ArrayList<>();

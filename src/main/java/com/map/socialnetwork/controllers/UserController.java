@@ -9,6 +9,7 @@ import com.map.socialnetwork.repository.paging.Page;
 import com.map.socialnetwork.repository.paging.PageableImpl;
 import com.map.socialnetwork.service.Authenticator;
 import com.map.socialnetwork.service.Service;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,6 +39,7 @@ public class UserController implements Observer {
     private final ObservableList<User> model = FXCollections.observableArrayList();
     private Page<User> firstLoadedPage;
     private Page<User> secondLoadedPage;
+
 
     @FXML
     private TableColumn<User, String> FirstNameColumn;
@@ -89,13 +91,13 @@ public class UserController implements Observer {
         Platform.runLater(() -> {
             ScrollBar tvScrollBar = (ScrollBar) friendsTable.lookup(".scroll-bar:vertical");
             tvScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
-                if ((Double)newValue == 0.0) {
+                if ((Double) newValue == 0.0) {
                     if (firstLoadedPage.getPageable().getPageNumber() > 1) {
                         secondLoadedPage = firstLoadedPage;
                         firstLoadedPage = service.getFriends(firstLoadedPage.previousPageable(), myUser);
                         setModel();
                     }
-                } else if ((Double)newValue == 1.0) {
+                } else if ((Double) newValue == 1.0) {
                     if (secondLoadedPage.getContent().size() == secondLoadedPage.getPageable().getPageSize()) {
                         Page<User> newUsers = service.getFriends(secondLoadedPage.nextPageable(), myUser);
 
@@ -248,5 +250,26 @@ public class UserController implements Observer {
         ReportsController reportsController = fxmlLoader.getController();
         reportsController.setUser(myUser);
         reportsController.setService(service);
+    }
+
+    @FXML
+    private void handleUserPage() throws IOException {
+        try {
+            User user = service.getUser(friendsTable.getSelectionModel().getSelectedItem().getId()).get();
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userPage.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            primaryStage.setTitle("Meta");
+            primaryStage.setScene(scene);
+
+            UserPageController userPageController = fxmlLoader.getController();
+            userPageController.setService(service);
+            userPageController.setAuthentication(authenticator);
+            userPageController.setUserPage(user);
+            userPageController.setUser(myUser);
+            userPageController.setStage(primaryStage);
+
+        } catch (NullPointerException nullPointerException) {
+            MessageAlert.showErrorMessage(null, "Please select a user first!");
+        }
     }
 }
