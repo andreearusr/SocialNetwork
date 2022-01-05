@@ -1,10 +1,7 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
-import com.map.socialnetwork.domain.Friendship;
-import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
-import com.map.socialnetwork.domain.UserPage;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
@@ -43,7 +40,6 @@ public class UserController implements Observer {
     private Page<User> firstLoadedPage;
     private Page<User> secondLoadedPage;
 
-    private UserPage userPage;
 
     @FXML
     private TableColumn<User, String> FirstNameColumn;
@@ -70,15 +66,6 @@ public class UserController implements Observer {
 
         this.myUser = user.get();
         loggedUser.setText(myUser.toString());
-
-        String firstName = myUser.getFirstName();
-        String lastName = myUser.getLastName();
-        List<User> friends = service.getFriends(myUser);
-        List<Friendship> friendRequests = service.getAllFriendshipRequests(myUser.getId());
-        List<Message> receivedMessages = service.getReceivedMessages(myUser.getId());
-
-        this.userPage = new UserPage(firstName, lastName, friends, friendRequests, receivedMessages);
-
         initModel();
     }
 
@@ -263,5 +250,26 @@ public class UserController implements Observer {
         ReportsController reportsController = fxmlLoader.getController();
         reportsController.setUser(myUser);
         reportsController.setService(service);
+    }
+
+    @FXML
+    private void handleUserPage() throws IOException {
+        try {
+            User user = service.getUser(friendsTable.getSelectionModel().getSelectedItem().getId()).get();
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userPage.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            primaryStage.setTitle("Meta");
+            primaryStage.setScene(scene);
+
+            UserPageController userPageController = fxmlLoader.getController();
+            userPageController.setService(service);
+            userPageController.setAuthentication(authenticator);
+            userPageController.setUserPage(user);
+            userPageController.setUser(myUser);
+            userPageController.setStage(primaryStage);
+
+        } catch (NullPointerException nullPointerException) {
+            MessageAlert.showErrorMessage(null, "Please select a user first!");
+        }
     }
 }
