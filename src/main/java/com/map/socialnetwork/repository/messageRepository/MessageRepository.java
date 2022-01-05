@@ -11,4 +11,5 @@ public interface MessageRepository extends Repository<Long, Message>, MessagePag
     List<Message> getConversation(User firstUser, User secondUser);
     List<Message> getConversationFromTimeSpan(User firstUser, User secondUser, Timestamp start, Timestamp end);
     List<Message> getActivity(User user, Timestamp start, Timestamp end);
+    List<Message> getReceivedMessages(long id);
 }

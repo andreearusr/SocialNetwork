@@ -1,7 +1,10 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
+import com.map.socialnetwork.domain.Friendship;
+import com.map.socialnetwork.domain.Message;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.UserPage;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
@@ -9,6 +12,7 @@ import com.map.socialnetwork.repository.paging.Page;
 import com.map.socialnetwork.repository.paging.PageableImpl;
 import com.map.socialnetwork.service.Authenticator;
 import com.map.socialnetwork.service.Service;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,6 +43,8 @@ public class UserController implements Observer {
     private Page<User> firstLoadedPage;
     private Page<User> secondLoadedPage;
 
+    private UserPage userPage;
+
     @FXML
     private TableColumn<User, String> FirstNameColumn;
 
@@ -64,6 +70,15 @@ public class UserController implements Observer {
 
         this.myUser = user.get();
         loggedUser.setText(myUser.toString());
+
+        String firstName = myUser.getFirstName();
+        String lastName = myUser.getLastName();
+        List<User> friends = service.getFriends(myUser);
+        List<Friendship> friendRequests = service.getAllFriendshipRequests(myUser.getId());
+        List<Message> receivedMessages = service.getReceivedMessages(myUser.getId());
+
+        this.userPage = new UserPage(firstName, lastName, friends, friendRequests, receivedMessages);
+
         initModel();
     }
 
@@ -89,13 +104,13 @@ public class UserController implements Observer {
         Platform.runLater(() -> {
             ScrollBar tvScrollBar = (ScrollBar) friendsTable.lookup(".scroll-bar:vertical");
             tvScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
-                if ((Double)newValue == 0.0) {
+                if ((Double) newValue == 0.0) {
                     if (firstLoadedPage.getPageable().getPageNumber() > 1) {
                         secondLoadedPage = firstLoadedPage;
                         firstLoadedPage = service.getFriends(firstLoadedPage.previousPageable(), myUser);
                         setModel();
                     }
-                } else if ((Double)newValue == 1.0) {
+                } else if ((Double) newValue == 1.0) {
                     if (secondLoadedPage.getContent().size() == secondLoadedPage.getPageable().getPageSize()) {
                         Page<User> newUsers = service.getFriends(secondLoadedPage.nextPageable(), myUser);
 

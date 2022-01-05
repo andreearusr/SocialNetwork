@@ -158,6 +158,10 @@ public class Service extends Observable {
         return messageDBRepository.getConversation(pageable, firstUser, secondUser);
     }
 
+    public List<Message> getReceivedMessages(long userId) {
+        return messageDBRepository.getReceivedMessages(userId);
+    }
+
     public void sendFriendRequest(Long firstUserId, Long secondUserId) throws MissingEntityException, DuplicateEntityException, ValidatorException {
         User firstUser = userDBRepository.get(firstUserId).orElseThrow(() -> new MissingEntityException("First user is missing!"));
         User secondUser = userDBRepository.get(secondUserId).orElseThrow(() -> new MissingEntityException("Second user is missing!"));
@@ -209,8 +213,7 @@ public class Service extends Observable {
         if (friendship.isPresent()) {
             friendship.get().setStatus(Friendship.Status.REJECTED);
             friendshipDBRepository.update(friendship.get());
-        }
-        else if (friendshipSwap.isPresent()) {
+        } else if (friendshipSwap.isPresent()) {
             friendshipSwap.get().setStatus(Friendship.Status.REJECTED);
             friendshipDBRepository.update(friendshipSwap.get());
         } else {
@@ -235,11 +238,11 @@ public class Service extends Observable {
         if (friendship.isEmpty()) {
             throw new MissingEntityException("Request doesn't exist!");
         }
-        
-        if(friendship.get().getStatus() != Friendship.Status.PENDING) {
+
+        if (friendship.get().getStatus() != Friendship.Status.PENDING) {
             throw new InvalidRequestException("Can not retract this request!");
         }
-        
+
         friendshipDBRepository.delete(friendship.get());
 
         setChanged();
@@ -254,11 +257,11 @@ public class Service extends Observable {
         return friendshipDBRepository.getSentPendingRequests(pageable, user);
     }
 
-    public List<Friendship> getAllFriendshipRequests(long id){
+    public List<Friendship> getAllFriendshipRequests(long id) {
         return friendshipDBRepository.getAll(id);
     }
 
-    public Page<Friendship> getAllFriendshipRequests(Pageable<Friendship> pageable, long id){
+    public Page<Friendship> getAllFriendshipRequests(Pageable<Friendship> pageable, long id) {
         return friendshipDBRepository.getAll(pageable, id);
     }
 
@@ -271,7 +274,7 @@ public class Service extends Observable {
 
         for (Message message : messages) {
             body.append("New message from: ").append(secondUser.getFullName()).append("\nContent: \n\"").append(message.getMessage())
-                            .append("\"\n").append("Time: ").append(message.getTimestamp()).append("\n\n");
+                    .append("\"\n").append("Time: ").append(message.getTimestamp()).append("\n\n");
         }
 
         saveTextToPdf(body.toString());
