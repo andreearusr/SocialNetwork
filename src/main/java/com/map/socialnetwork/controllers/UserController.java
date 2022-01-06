@@ -2,6 +2,7 @@ package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.UserPage;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
@@ -36,6 +37,7 @@ public class UserController implements Observer {
     private Stage primaryStage;
 
     private User myUser;
+    private UserPage userPage;
     private final ObservableList<User> model = FXCollections.observableArrayList();
     private Page<User> firstLoadedPage;
     private Page<User> secondLoadedPage;
@@ -52,6 +54,15 @@ public class UserController implements Observer {
 
     @FXML
     private Label loggedUser;
+
+    public void setUserPage() {
+        userPage.setFirstName(myUser.getFirstName());
+        userPage.setLastName(myUser.getLastName());
+        userPage.setFriends(service.getFriends(myUser));
+        userPage.setFriendRequests(service.getAllFriendshipRequests(myUser.getId()));
+        userPage.setReceivedMessages(service.getReceivedMessages(myUser.getId()));
+    }
+
 
     public void setService(Service service) throws AuthenticationException, IOException {
         this.service = service;
@@ -271,5 +282,20 @@ public class UserController implements Observer {
         } catch (NullPointerException nullPointerException) {
             MessageAlert.showErrorMessage(null, "Please select a user first!");
         }
+    }
+
+    @FXML
+    private void handleAddEvent() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addEvent.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.setTitle("Add new event");
+        stage.show();
+
+        AddEventController addEventController = fxmlLoader.getController();
+        addEventController.setService(service);
+        addEventController.setUser(myUser);
+
     }
 }

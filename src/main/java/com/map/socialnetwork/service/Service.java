@@ -264,6 +264,13 @@ public class Service extends Observable {
         return friendshipDBRepository.getAll(pageable, id);
     }
 
+    public void addEvent(Event event) throws ValidatorException, DuplicateEntityException {
+        eventDBRepository.store(event);
+
+        setChanged();
+        notifyObservers(Event.class);
+    }
+
     public Page<Event> getAllEvents(Pageable<Event> pageable, long id) {
         return eventDBRepository.getAll(pageable, id);
     }

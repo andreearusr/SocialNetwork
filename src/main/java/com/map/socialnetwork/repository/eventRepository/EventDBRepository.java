@@ -30,6 +30,10 @@ public class EventDBRepository extends AbstractRepository<Event> implements Even
 
     public void store(Event event) throws DuplicateEntityException, ValidatorException {
         validator.validate(event);
+
+        if (!get(event.getEventName()).isEmpty())
+            throw new DuplicateEntityException("This event already exists");
+
         String sql = "insert into events (event_name, date, id_organizer) values (?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
@@ -181,7 +185,7 @@ public class EventDBRepository extends AbstractRepository<Event> implements Even
 
     public Boolean checkIfParticipate(String eventName, long id) {
         String sql = """
-                SELECT COUNT(*) FROM users_events 
+                SELECT event_name FROM users_events 
                 WHERE event_name=(?) AND user_id=(?)
                 """;
 
@@ -191,19 +195,21 @@ public class EventDBRepository extends AbstractRepository<Event> implements Even
             statement.setLong(2, id);
 
             ResultSet resultSet = statement.executeQuery();
-            if(resultSet.equals(0))
-                return false;
+            while (resultSet.next()) {
+                 if (get(resultSet.getString("event_name")).isPresent())
+                     return true;
+            }
 
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
 
-        return true;
+        return false;
     }
 
     public Boolean checkIfUnsubscribe(String eventName, long id) {
         String sql = """
-                SELECT COUNT(*) FROM users_events 
+                SELECT event_name FROM users_events 
                 WHERE event_name=(?) AND user_id=(?) AND status='UNSUBSCRIBE'
                 """;
 
@@ -213,14 +219,17 @@ public class EventDBRepository extends AbstractRepository<Event> implements Even
             statement.setLong(2, id);
 
             ResultSet resultSet = statement.executeQuery();
-            if(resultSet.equals(0))
-                return false;
+
+            while (resultSet.next()) {
+                if (get(resultSet.getString("event_name")).isPresent())
+                    return true;
+            }
 
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        return false;
 
-        return true;
     }
 
     public void participateToEvent(Event event, long id) throws DuplicateEntityException {
@@ -246,7 +255,8 @@ public class EventDBRepository extends AbstractRepository<Event> implements Even
 
         if (!checkIfParticipate(event.getEventName(), id))
             throw new MissingEntityException("You are not participating in this event");
-        if(checkIfUnsubscribe(event.getEventName(), id))
+
+        if (checkIfUnsubscribe(event.getEventName(), id))
             throw new DuplicateEntityException("You are already unsubscribed");
 
 
