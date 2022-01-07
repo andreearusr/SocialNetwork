@@ -38,6 +38,10 @@ public class Service extends Observable {
         notifyObservers(User.class);
     }
 
+    public Optional<User> getUser(String firstName, String lastName) {
+        return  userDBRepository.getUser(firstName, lastName);
+    }
+
     public void deleteUser(long id) throws MissingEntityException {
         Optional<User> userToDelete = userDBRepository.get(id);
 

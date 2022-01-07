@@ -72,6 +72,33 @@ public class UserDBRepository extends AbstractRepository<User> implements UserRe
         return Optional.empty();
     }
 
+    public Optional<User> getUser(String firstName, String lastName){
+        String sql = "SELECT * from users WHERE first_name = (?) AND last_name = (?)";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                long id = resultSet.getLong("id");
+                String firstN = resultSet.getString("first_name");
+                String lastN = resultSet.getString("last_name");
+
+                return Optional.of(new User(id, firstN, lastN));
+            }
+
+            return Optional.empty();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
+
+    }
+
+
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
 
