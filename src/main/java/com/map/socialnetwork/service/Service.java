@@ -309,6 +309,10 @@ public class Service extends Observable {
         saveTextToPdf(body.toString());
     }
 
+    public List<Event> getEventsUserSubscriber(long id){
+        return eventDBRepository.getEventsUserSubscriber(id);
+    }
+
     public void saveActivity(User user, Timestamp start, Timestamp end) throws IOException {
         List<Message> messages = messageDBRepository.getActivity(user, start, end);
         List<Friendship> friendships = friendshipDBRepository.getActivity(user, start, end);

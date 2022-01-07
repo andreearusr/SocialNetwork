@@ -196,8 +196,8 @@ public class EventDBRepository extends AbstractRepository<Event> implements Even
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                 if (get(resultSet.getString("event_name")).isPresent())
-                     return true;
+                if (get(resultSet.getString("event_name")).isPresent())
+                    return true;
             }
 
         } catch (SQLException ex) {
@@ -274,6 +274,30 @@ public class EventDBRepository extends AbstractRepository<Event> implements Even
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Event> getEventsUserSubscriber(long id) {
+
+        List<Event> eventsUser = new ArrayList<>();
+        String sql = """
+                SELECT * FROM users_events 
+                WHERE user_id=(?) AND status='SUBSCRIBER'
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                get(resultSet.getString("event_name")).ifPresent(eventsUser::add);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return eventsUser;
     }
 
 
