@@ -61,4 +61,19 @@ public class LoginController {
         userController.setService(service);
         userController.setStage(primaryStage);
     }
+
+    @FXML
+    private void handleRegister() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("register.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        primaryStage.setTitle("Register");
+        primaryStage.setScene(scene);
+
+        RegisterController registerController = fxmlLoader.getController();
+        registerController.setService(service);
+        registerController.setAuthentication(authenticator);
+        registerController.setStage(primaryStage);
+
+    }
+
 }

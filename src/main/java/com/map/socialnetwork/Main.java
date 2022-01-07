@@ -58,7 +58,7 @@ public class Main extends Application {
 
     private void initView(Stage primaryStage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 347, 320);
+        Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setTitle("Social Network!");
         primaryStage.setScene(scene);
 
