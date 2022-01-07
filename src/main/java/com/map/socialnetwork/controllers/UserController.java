@@ -1,7 +1,9 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
+import com.map.socialnetwork.domain.Event;
 import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.UserPage;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
@@ -16,18 +18,16 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.shape.Box;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
 public class UserController implements Observer {
@@ -36,6 +36,7 @@ public class UserController implements Observer {
     private Stage primaryStage;
 
     private User myUser;
+    private UserPage userPage;
     private final ObservableList<User> model = FXCollections.observableArrayList();
     private Page<User> firstLoadedPage;
     private Page<User> secondLoadedPage;
@@ -52,6 +53,15 @@ public class UserController implements Observer {
 
     @FXML
     private Label loggedUser;
+
+    public void setUserPage() {
+        userPage.setFirstName(myUser.getFirstName());
+        userPage.setLastName(myUser.getLastName());
+        userPage.setFriends(service.getFriends(myUser));
+        userPage.setFriendRequests(service.getAllFriendshipRequests(myUser.getId()));
+        userPage.setReceivedMessages(service.getReceivedMessages(myUser.getId()));
+    }
+
 
     public void setService(Service service) throws AuthenticationException, IOException {
         this.service = service;
@@ -109,6 +119,20 @@ public class UserController implements Observer {
                     }
                 }
             });
+        });
+
+        Platform.runLater(() -> {
+            for (Event e : service.getEventsUserSubscriber(myUser.getId())) {
+                if (e.getDateReminder().toLocalDateTime().toLocalDate().isBefore(LocalDate.now()) ||
+                        e.getDateReminder().toLocalDateTime().toLocalDate().isEqual(LocalDate.now())) {
+                    if (Objects.equals(e.getDateReminder().toLocalDateTime().toLocalDate(), LocalDate.now())) {
+                        Alert message = new Alert(Alert.AlertType.INFORMATION);
+                        message.setTitle("Mesaj informare");
+                        message.setContentText("Event " + e.getEventName() + " is coming in just 3 days!\nWe are waiting for you");
+                        message.showAndWait();
+                    }
+                }
+            }
         });
     }
 
@@ -271,5 +295,20 @@ public class UserController implements Observer {
         } catch (NullPointerException nullPointerException) {
             MessageAlert.showErrorMessage(null, "Please select a user first!");
         }
+    }
+
+    @FXML
+    private void handleAddEvent() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addEvent.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.setTitle("Add new event");
+        stage.show();
+
+        AddEventController addEventController = fxmlLoader.getController();
+        addEventController.setService(service);
+        addEventController.setUser(myUser);
+
     }
 }

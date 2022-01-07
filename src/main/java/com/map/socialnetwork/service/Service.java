@@ -1,13 +1,11 @@
 package com.map.socialnetwork.service;
 
-import com.map.socialnetwork.domain.Friendship;
-import com.map.socialnetwork.domain.Message;
-import com.map.socialnetwork.domain.Tuple;
-import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.*;
 import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.InvalidRequestException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
+import com.map.socialnetwork.repository.eventRepository.EventRepository;
 import com.map.socialnetwork.repository.friendshipRepository.FriendshipRepository;
 import com.map.socialnetwork.repository.messageRepository.MessageRepository;
 import com.map.socialnetwork.repository.paging.Page;
@@ -33,6 +31,7 @@ public class Service extends Observable {
     private UserRepository userDBRepository;
     private FriendshipRepository friendshipDBRepository;
     private MessageRepository messageDBRepository;
+    private EventRepository eventDBRepository;
 
     public void addUser(String firstName, String lastName) throws ValidatorException, DuplicateEntityException {
         userDBRepository.store(new User(firstName, lastName));
@@ -265,6 +264,36 @@ public class Service extends Observable {
         return friendshipDBRepository.getAll(pageable, id);
     }
 
+    public void addEvent(Event event) throws ValidatorException, DuplicateEntityException {
+        eventDBRepository.store(event);
+
+        setChanged();
+        notifyObservers(Event.class);
+    }
+
+    public Page<Event> getAllEvents(Pageable<Event> pageable, long id) {
+        return eventDBRepository.getAll(pageable, id);
+    }
+
+    public List<Event> getAllEvents(long id) {
+        return eventDBRepository.getAll(id);
+    }
+
+    public void participateToEvent(Event event, long id) throws DuplicateEntityException {
+        eventDBRepository.participateToEvent(event, id);
+
+        setChanged();
+        notifyObservers(Event.class);
+
+    }
+
+    public void unsubscribeAtEvent(Event event, long id) throws MissingEntityException, DuplicateEntityException {
+        eventDBRepository.unsubscribeAtEvent(event, id);
+
+        setChanged();
+        notifyObservers(Event.class);
+    }
+
     public void saveConversation(User firstUser, User secondUser, Timestamp start, Timestamp end) throws IOException {
         List<Message> messages = messageDBRepository.getConversationFromTimeSpan(
                 firstUser, secondUser, start, end
@@ -278,6 +307,10 @@ public class Service extends Observable {
         }
 
         saveTextToPdf(body.toString());
+    }
+
+    public List<Event> getEventsUserSubscriber(long id){
+        return eventDBRepository.getEventsUserSubscriber(id);
     }
 
     public void saveActivity(User user, Timestamp start, Timestamp end) throws IOException {

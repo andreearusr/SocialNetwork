@@ -1,8 +1,11 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
+import com.map.socialnetwork.domain.Event;
 import com.map.socialnetwork.domain.User;
 import com.map.socialnetwork.exceptions.AuthenticationException;
+import com.map.socialnetwork.exceptions.DuplicateEntityException;
+import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.repository.paging.Page;
 import com.map.socialnetwork.repository.paging.PageableImpl;
 import com.map.socialnetwork.service.Authenticator;
@@ -13,10 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -32,11 +32,14 @@ public class UserPageController implements Observer {
     private Stage primaryStage;
 
     private final ObservableList<User> model = FXCollections.observableArrayList();
+    private final ObservableList<Event> modelEvents = FXCollections.observableArrayList();
 
     private User loggedUser;
     private User myUser;
     private Page<User> firstLoadedPage;
     private Page<User> secondLoadedPage;
+    private Page<Event> firstLoadedEvent;
+    private Page<Event> secondLoadedEvent;
 
     @FXML
     private TableColumn<User, String> FirstNameColumn;
@@ -49,6 +52,17 @@ public class UserPageController implements Observer {
 
     @FXML
     private Label userName;
+
+    @FXML
+    private Label eventDetails;
+
+    @FXML
+    private TableView<Event> eventsTable;
+
+    @FXML
+    private TableColumn<Event, String> EventNameColumn;
+
+
 
     public void setService(Service service) {
         this.service = service;
@@ -75,7 +89,7 @@ public class UserPageController implements Observer {
         initModel();
     }
 
-    public void setUser(User loggedUser){
+    public void setUser(User loggedUser) {
         this.loggedUser = loggedUser;
     }
 
@@ -83,6 +97,7 @@ public class UserPageController implements Observer {
     private void initialize() {
         FirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         LastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        EventNameColumn.setCellValueFactory(new PropertyValueFactory<>("eventName"));
         friendsTable.setItems(model);
 
         Platform.runLater(() -> {
@@ -107,11 +122,38 @@ public class UserPageController implements Observer {
                 }
             });
         });
+
+        eventsTable.setItems(modelEvents);
+        Platform.runLater(() -> {
+            ScrollBar tvScrollBar = (ScrollBar) eventsTable.lookup(".scroll-bar:vertical");
+            tvScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                if ((Double) newValue == 0.0) {
+                    if (firstLoadedEvent.getPageable().getPageNumber() > 1) {
+                        secondLoadedEvent = firstLoadedEvent;
+                        firstLoadedEvent = service.getAllEvents(firstLoadedEvent.previousPageable(), myUser.getId());
+                        setModel();
+                    }
+                } else if ((Double) newValue == 1.0) {
+                    if (secondLoadedEvent.getContent().size() == secondLoadedEvent.getPageable().getPageSize()) {
+                        Page<Event> newEvents = service.getAllEvents(secondLoadedEvent.nextPageable(), myUser.getId());
+
+                        if (!newEvents.getContent().isEmpty()) {
+                            firstLoadedEvent = secondLoadedEvent;
+                            secondLoadedEvent = newEvents;
+                            setModel();
+                        }
+                    }
+                }
+            });
+        });
     }
 
     private void initModel() {
         firstLoadedPage = service.getFriends(new PageableImpl<>(1, 20), myUser);
         secondLoadedPage = service.getFriends(new PageableImpl<>(2, 20), myUser);
+
+        firstLoadedEvent = service.getAllEvents(new PageableImpl<>(1, 20), myUser.getId());
+        secondLoadedEvent = service.getAllEvents(new PageableImpl<>(2, 20), myUser.getId());
 
         setModel();
     }
@@ -120,8 +162,17 @@ public class UserPageController implements Observer {
         List<User> loadedUsers = firstLoadedPage.getContent();
         loadedUsers.addAll(secondLoadedPage.getContent());
         model.clear();
-
         model.setAll(loadedUsers);
+
+        List<Event> loadedEvents = firstLoadedEvent.getContent();
+        loadedEvents.addAll(secondLoadedEvent.getContent());
+        modelEvents.clear();
+        modelEvents.setAll(loadedEvents);
+    }
+
+    private void setDescription(){
+        Event event = eventsTable.getSelectionModel().getSelectedItem();
+        eventDetails.setText("Date: " + event.getDate() + "\nNumber of participants: " + event.getEventParticipants().size());
     }
 
 
@@ -137,5 +188,31 @@ public class UserPageController implements Observer {
         userController.setService(service);
         userController.setStage(primaryStage);
     }
+
+    @FXML
+    private void handleSelectionEvent() {
+        setDescription();
+    }
+
+    @FXML
+    private void handleParticipate() {
+        Event event = eventsTable.getSelectionModel().getSelectedItem();
+        try {
+            service.participateToEvent(event, loggedUser.getId());
+        } catch (DuplicateEntityException e) {
+            MessageAlert.showErrorMessage(null, e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleUnsubscribe() {
+        Event event = eventsTable.getSelectionModel().getSelectedItem();
+        try {
+            service.unsubscribeAtEvent(event, loggedUser.getId());
+        } catch (MissingEntityException | DuplicateEntityException e) {
+            MessageAlert.showErrorMessage(null, e.getMessage());
+        }
+    }
+
 
 }

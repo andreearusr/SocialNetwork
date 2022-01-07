@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.CubicCurve?>
+
+
+<AnchorPane prefHeight="257.0" prefWidth="242.0" style="-fx-background-color: coral;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.AddEventController">
+   <children>
+      <TextField fx:id="inputEventName" layoutX="23.0" layoutY="36.0" promptText="Event Name" />
+      <DatePicker fx:id="inputDate" layoutX="22.0" layoutY="73.0" prefHeight="26.0" prefWidth="150.0" promptText="Date" />
+      <Button layoutX="158.0" layoutY="168.0" mnemonicParsing="false" onAction="#handleAdd" prefHeight="26.0" prefWidth="58.0" text="Add" />
+      <CubicCurve controlX1="-196.35008239746094" controlX2="58.20002746582031" controlY1="74.80001831054688" controlY2="92.19998168945312" endX="-131.99998474121094" endY="16.0" layoutX="114.0" layoutY="182.0" smooth="false" startX="-71.17430114746094" startY="-34.99999237060547" stroke="#634343">
+         <fill>
+            <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </Stop>
+               </stops>
+            </RadialGradient>
+         </fill>
+      </CubicCurve>
+   </children>
+</AnchorPane>

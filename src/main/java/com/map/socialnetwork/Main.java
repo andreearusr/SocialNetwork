@@ -1,12 +1,11 @@
 package com.map.socialnetwork;
 
 import com.map.socialnetwork.controllers.LoginController;
-import com.map.socialnetwork.domain.Credentials;
-import com.map.socialnetwork.domain.Friendship;
-import com.map.socialnetwork.domain.Message;
-import com.map.socialnetwork.domain.User;
+import com.map.socialnetwork.domain.*;
 import com.map.socialnetwork.domain.validator.*;
 import com.map.socialnetwork.repository.credentialsRepository.CredentialsDBRepository;
+import com.map.socialnetwork.repository.eventRepository.EventDBRepository;
+import com.map.socialnetwork.repository.eventRepository.EventRepository;
 import com.map.socialnetwork.repository.friendshipRepository.FriendshipDBRepository;
 import com.map.socialnetwork.repository.friendshipRepository.FriendshipRepository;
 import com.map.socialnetwork.repository.messageRepository.MessageDBRepository;
@@ -37,13 +36,15 @@ public class Main extends Application {
         Validator<User> userValidator = new UserValidator();
         Validator<Message> messageValidator = new MessageValidator();
         Validator<Friendship> friendshipValidator = new FriendshipValidator();
+        Validator<Event> eventValidator = new EventsValidator();
 
         CredentialsDBRepository credentialsDBRepository = new CredentialsDBRepository(url, username, password, credentialsValidator);
         UserRepository userDBRepository = new UserDBRepository(url, username, password, userValidator);
         MessageRepository messageDBRepository = new MessageDBRepository(url, username, password, userDBRepository, messageValidator);
         FriendshipRepository friendshipDBRepository = new FriendshipDBRepository(url, username, password, userDBRepository, friendshipValidator);
+        EventRepository eventDBRepository = new EventDBRepository(url, username, password, userDBRepository, eventValidator);
         authenticator = new Authenticator(credentialsDBRepository);
-        service = new Service(userDBRepository, friendshipDBRepository, messageDBRepository);
+        service = new Service(userDBRepository, friendshipDBRepository, messageDBRepository, eventDBRepository);
 
         initView(primaryStage);
         primaryStage.setResizable(false);
