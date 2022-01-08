@@ -12,5 +12,5 @@ public interface UserRepository extends Repository<Long, User>, UserPagingReposi
 
     void update(Long id, User newUser) throws ValidatorException;
 
-    Optional<User> getUser(String firstName, String lastName);
+    long getLastUserAdded();
 }

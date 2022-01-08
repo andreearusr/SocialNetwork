@@ -72,30 +72,27 @@ public class UserDBRepository extends AbstractRepository<User> implements UserRe
         return Optional.empty();
     }
 
-    public Optional<User> getUser(String firstName, String lastName){
-        String sql = "SELECT * from users WHERE first_name = (?) AND last_name = (?)";
+    public long getLastUserAdded() {
+        String sql = """
+                SELECT id FROM users AS u
+                WHERE u.id=(SELECT max(u.id) FROM users AS u)
+                 """;
 
+        long id = 0L;
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, firstName);
-            statement.setString(2, lastName);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                long id = resultSet.getLong("id");
-                String firstN = resultSet.getString("first_name");
-                String lastN = resultSet.getString("last_name");
-
-                return Optional.of(new User(id, firstN, lastN));
+                return resultSet.getLong("id");
             }
 
-            return Optional.empty();
+            return id;
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return Optional.empty();
-
+        return id;
     }
 
 
@@ -145,8 +142,8 @@ public class UserDBRepository extends AbstractRepository<User> implements UserRe
         List<User> users = new ArrayList<>();
 
         String sql = """
-        SELECT * from users
-        LIMIT (?) OFFSET (?)""";
+                SELECT * from users
+                LIMIT (?) OFFSET (?)""";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql)) {
