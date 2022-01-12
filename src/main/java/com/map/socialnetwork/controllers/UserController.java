@@ -186,7 +186,7 @@ public class UserController implements Observer {
 
         Stage dialogStage = new Stage();
 
-        dialogStage.setTitle("Friendship requests");
+        dialogStage.setTitle("Friend requests");
         dialogStage.setScene(scene);
         dialogStage.setResizable(false);
 
@@ -202,7 +202,7 @@ public class UserController implements Observer {
         authenticator.logOut();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Meta");
+        primaryStage.setTitle("Go SOcial");
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();
