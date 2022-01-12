@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="331.0" prefWidth="615.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.AddFriendController">
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="487.0" prefWidth="656.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.AddFriendController">
     <children>
-        <TableView fx:id="tableUsers" layoutX="21.0" layoutY="8.0" prefHeight="249.0" prefWidth="575.0">
+      <ImageView fitHeight="575.0" fitWidth="653.0" layoutX="-1.0" layoutY="-3.0" opacity="0.41" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/addFriend.png" />
+         </image>
+      </ImageView>
+        <TableView fx:id="tableUsers" layoutX="31.0" layoutY="71.0" prefHeight="319.0" prefWidth="383.0">
             <columns>
-                <TableColumn fx:id="FirstNameColumn" prefWidth="288.0" text="First Name" />
-                <TableColumn fx:id="LastNameColumn" prefWidth="286.0" text="Last Name" />
+                <TableColumn fx:id="LastNameColumn" prefWidth="190.39997100830078" text="Last Name" />
+                <TableColumn fx:id="FirstNameColumn" prefWidth="192.00001831054686" text="First Name" />
             </columns>
         </TableView>
-        <Button layoutX="165.0" layoutY="272.0" mnemonicParsing="false" onAction="#handleAddFriend" prefHeight="34.0" prefWidth="288.0" text="Add friend" />
+        <Button layoutX="434.0" layoutY="446.0" mnemonicParsing="false" onAction="#handleAddFriend" prefHeight="34.0" prefWidth="208.0" style="-fx-background-color: #AFE1AF;" text="Add friend" textFill="#1f31bf" />
+      <Label layoutX="31.0" layoutY="33.0" prefHeight="26.0" prefWidth="145.0" text="Users you can add:">
+         <font>
+            <Font name="System Italic" size="16.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>
