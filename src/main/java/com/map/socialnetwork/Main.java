@@ -48,7 +48,7 @@ public class Main extends Application {
 
         initView(primaryStage);
         primaryStage.setResizable(false);
-        primaryStage.setTitle("Meta");
+        primaryStage.setTitle("Go SOcial");
         primaryStage.show();
     }
 
@@ -59,7 +59,7 @@ public class Main extends Application {
     private void initView(Stage primaryStage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Social Network!");
+        primaryStage.setTitle("Go SOcial");
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();

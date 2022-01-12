@@ -9,10 +9,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="534.0" prefWidth="435.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.RegisterController">
+<AnchorPane prefHeight="534.0" prefWidth="435.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.RegisterController">
    <children>
-      <AnchorPane layoutX="-3.0" opacity="0.57" prefHeight="78.0" prefWidth="438.0" style="-fx-background-color: coral;">
+      <AnchorPane layoutX="-3.0" opacity="0.72" prefHeight="78.0" prefWidth="438.0" style="-fx-background-color: #C8A2C8;">
          <children>
             <Label layoutX="90.0" layoutY="25.0" prefHeight="27.0" prefWidth="158.0" text="User Registration" textFill="#fffafa">
                <font>
@@ -33,8 +32,8 @@
       <Label layoutX="79.0" layoutY="234.0" prefHeight="18.0" prefWidth="55.0" text="Username" />
       <Label layoutX="79.0" layoutY="292.0" prefHeight="18.0" prefWidth="55.0" text="Password" />
       <TextField fx:id="inputUsername" layoutX="78.0" layoutY="252.0" promptText="Username" />
-      <Button layoutX="99.0" layoutY="431.0" mnemonicParsing="false" onAction="#handleRegister" opacity="0.75" prefHeight="26.0" prefWidth="237.0" style="-fx-background-color: coral;" text="Register" />
-      <Button layoutX="98.0" layoutY="469.0" mnemonicParsing="false" onAction="#handleClose" opacity="0.75" prefHeight="26.0" prefWidth="238.0" style="-fx-background-color: coral;" text="Close" />
+      <Button layoutX="97.0" layoutY="434.0" mnemonicParsing="false" onAction="#handleRegister" prefHeight="26.0" prefWidth="237.0" style="-fx-background-color: #C8A2C8;" text="Register" />
+      <Button layoutX="98.0" layoutY="469.0" mnemonicParsing="false" onAction="#handleClose" prefHeight="26.0" prefWidth="238.0" style="-fx-background-color: #C8A2C8;" text="Close" />
       <PasswordField fx:id="inputPassword" layoutX="78.0" layoutY="310.0" promptText="Password" />
       <Label layoutX="79.0" layoutY="354.0" prefHeight="18.0" prefWidth="110.0" text="Confirm Password" />
       <PasswordField fx:id="inputConfirmPassword" layoutX="78.0" layoutY="373.0" promptText="Confirm Password" />

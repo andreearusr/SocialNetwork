@@ -93,7 +93,7 @@ public class RegisterController {
     private void handleClose() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Social Network!");
+        primaryStage.setTitle("Go SOcial");
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();
