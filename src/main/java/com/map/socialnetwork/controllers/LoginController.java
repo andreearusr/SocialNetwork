@@ -53,7 +53,7 @@ public class LoginController {
     private void changeScene() throws IOException, AuthenticationException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userLogin.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Meta");
+        primaryStage.setTitle("Go SOcial");
         primaryStage.setScene(scene);
 
         UserController userController = fxmlLoader.getController();

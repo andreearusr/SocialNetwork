@@ -282,7 +282,7 @@ public class UserController implements Observer {
             User user = service.getUser(friendsTable.getSelectionModel().getSelectedItem().getId()).get();
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userPage.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
-            primaryStage.setTitle("Meta");
+            primaryStage.setTitle("Go SOcial");
             primaryStage.setScene(scene);
 
             UserPageController userPageController = fxmlLoader.getController();

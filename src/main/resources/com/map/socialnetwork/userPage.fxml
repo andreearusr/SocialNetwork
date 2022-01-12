@@ -4,32 +4,56 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="512.0" prefWidth="763.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserPageController">
+<AnchorPane prefHeight="492.0" prefWidth="724.0" style="-fx-background-color: #D8BFD8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserPageController">
    <children>
-      <TableView fx:id="friendsTable" layoutX="335.0" layoutY="3.0" prefHeight="506.0" prefWidth="428.0">
+      <TableView fx:id="friendsTable" blendMode="COLOR_BURN" layoutX="398.0" layoutY="58.0" prefHeight="309.0" prefWidth="306.0" style="-fx-background-color: grey;">
         <columns>
-          <TableColumn fx:id="FirstNameColumn" prefWidth="229.5999755859375" text="FirstName" />
-          <TableColumn fx:id="LastNameColumn" prefWidth="197.60000610351562" text="LastName" />
+          <TableColumn fx:id="FirstNameColumn" prefWidth="152.80001831054688" resizable="false" text="FirstName" />
+          <TableColumn fx:id="LastNameColumn" prefWidth="153.59991455078125" resizable="false" text="LastName" />
         </columns>
       </TableView>
-      <Label fx:id="userName" layoutX="22.0" layoutY="32.0" prefHeight="26.0" prefWidth="136.0" textAlignment="CENTER" />
-      <Button layoutX="196.0" layoutY="470.0" mnemonicParsing="false" onAction="#handleClose" text="Close" />
-      <Circle fill="#efd866" layoutX="35.0" layoutY="72.0" radius="13.0" stroke="BLACK" strokeType="INSIDE">
-         <effect>
-            <Reflection fraction="0.68" topOpacity="0.57" />
-         </effect>
-      </Circle>
-      <Label fx:id="eventDetails" layoutX="14.0" layoutY="310.0" prefHeight="90.0" prefWidth="200.0" />
-      <Button layoutX="14.0" layoutY="416.0" mnemonicParsing="false" onAction="#handleParticipate" prefHeight="26.0" prefWidth="98.0" text="Participate" />
-      <Button layoutX="14.0" layoutY="443.0" mnemonicParsing="false" onAction="#handleUnsubscribe" prefHeight="26.0" prefWidth="98.0" text="Unsubscribe" />
-      <TableView fx:id="eventsTable" layoutX="12.0" layoutY="139.0" onMouseClicked="#handleSelectionEvent" prefHeight="161.0" prefWidth="200.0">
+      <Label fx:id="userName" alignment="CENTER" layoutX="66.0" layoutY="83.0" prefHeight="26.0" prefWidth="136.0" textAlignment="CENTER" />
+      <Button blendMode="HARD_LIGHT" layoutX="509.0" layoutY="424.0" mnemonicParsing="false" onAction="#handleClose" prefHeight="26.0" prefWidth="83.0" text="Close page" />
+      <Label fx:id="eventDetails" layoutX="35.0" layoutY="354.0" prefHeight="71.0" prefWidth="200.0" />
+      <TableView fx:id="eventsTable" blendMode="COLOR_BURN" layoutX="34.0" layoutY="213.0" onMouseClicked="#handleSelectionEvent" prefHeight="135.0" prefWidth="200.0" style="-fx-background-color: grey;">
         <columns>
-          <TableColumn fx:id="EventNameColumn" minWidth="0.0" prefWidth="199.19998931884766" text="EventName" />
+          <TableColumn fx:id="EventNameColumn" minWidth="0.0" prefWidth="209.59998931884766" text="EventName" />
         </columns>
       </TableView>
+      <ImageView fitHeight="44.0" fitWidth="45.0" layoutX="112.0" layoutY="27.0">
+         <image>
+            <Image url="@images/user.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="90.0" layoutY="137.0" prefHeight="34.0" prefWidth="87.0" text="My Events">
+         <font>
+            <Font name="MS Mincho" size="19.0" />
+         </font>
+      </Label>
+      <Label layoutX="466.0" layoutY="27.0" prefHeight="26.0" prefWidth="169.0" text="Hi there, Friends:">
+         <font>
+            <Font name="Copperplate Gothic Bold" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="146.0" layoutY="425.0" onMouseClicked="#handleUnsubscribe" text="Unsubscribe" textFill="#0015ff">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="35.0" layoutY="425.0" onMouseClicked="#handleParticipate" text="Participate" textFill="#140bc1">
+         <font>
+            <Font name="System Bold Italic" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="74.0" layoutY="165.0" opacity="0.61" prefHeight="30.0" prefWidth="120.0" text="feel free to join ">
+         <font>
+            <Font name="Mistral" size="23.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
