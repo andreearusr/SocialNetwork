@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane opacity="0.77" prefHeight="369.0" prefWidth="320.0" style="-fx-background-color: #D8BFD8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.AddEventController">
+   <children>
+      <TextField fx:id="inputEventName" layoutX="83.0" layoutY="51.0" promptText="Event Name" />
+      <DatePicker fx:id="inputDate" layoutX="83.0" layoutY="102.0" prefHeight="26.0" prefWidth="150.0" promptText="Date" />
+      <ImageView cache="true" cacheHint="QUALITY" fitHeight="113.0" fitWidth="124.0" layoutX="21.0" layoutY="154.0">
+         <image>
+            <Image url="@images/event.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="83.0" layoutY="32.0" prefHeight="18.0" prefWidth="105.0" text="Event Name" />
+      <Label layoutX="83.0" layoutY="83.0" prefHeight="18.0" prefWidth="45.0" text="Date" />
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="175.0" layoutY="317.0" onMouseClicked="#handleAdd" prefHeight="30.0" prefWidth="114.0" text="ADD event" textAlignment="CENTER" textFill="WHITE" underline="true" wrapText="true">
+         <font>
+            <Font name="MS Gothic" size="20.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="157.0" layoutY="154.0" opacity="0.57" prefHeight="113.0" prefWidth="150.0" text="DON'T TELL PEOPLE YOUR PLANS. SHOW THEM YOUR RESULTS " textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

@@ -21,12 +21,12 @@
           <TableColumn fx:id="date" editable="false" minWidth="0.0" prefWidth="194.40008544921875" text="DATE" />
         </columns>
       </TableView>
-      <Label layoutX="531.0" layoutY="229.0" onMouseClicked="#rejectFriendRequest" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: pink;" text="Reject">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="499.0" layoutY="229.0" onMouseClicked="#rejectFriendRequest" prefHeight="30.0" prefWidth="101.0" style="-fx-background-color: pink;" text="Reject">
          <font>
             <Font name="Arial" size="19.0" />
          </font>
       </Label>
-      <Label layoutX="531.0" layoutY="192.0" onMouseClicked="#acceptFriendRequest" prefHeight="30.0" prefWidth="62.0" style="-fx-background-color: pink;" text="Accept">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="500.0" layoutY="192.0" onMouseClicked="#acceptFriendRequest" prefHeight="30.0" prefWidth="101.0" style="-fx-background-color: pink;" text="Accept">
          <font>
             <Font name="Arial" size="19.0" />
          </font>

@@ -6,24 +6,24 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="395.0" prefWidth="562.0" style="-fx-background-color: #d8c4c8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.FriendshipRequestsController">
+<AnchorPane prefHeight="395.0" prefWidth="633.0" style="-fx-background-color: #d8c4c8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.FriendshipRequestsController">
    <children>
-      <Label alignment="CENTER" layoutX="42.0" layoutY="34.0" opacity="0.61" prefHeight="48.0" prefWidth="514.0" text="Not every friend request is a friend request. Some are just surveillance cameras. Pay attention!">
+      <Label alignment="CENTER" layoutX="9.0" layoutY="47.0" opacity="0.61" prefHeight="48.0" prefWidth="640.0" text="Not every friend request is a friend request. Some are just surveillance cameras. Pay attention!">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" layoutX="227.0" layoutY="21.0" prefHeight="26.0" prefWidth="118.0" text="Friend requests:" textAlignment="CENTER">
+      <Label alignment="CENTER" layoutX="256.0" layoutY="21.0" prefHeight="26.0" prefWidth="138.0" text="Friend requests:" textAlignment="CENTER">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <TableView fx:id="tableRequests" layoutY="105.0" prefHeight="290.0" prefWidth="566.0" style="-fx-background-color: d8c4c8;">
+      <TableView fx:id="tableRequests" layoutX="-6.0" layoutY="105.0" prefHeight="290.0" prefWidth="655.0" style="-fx-background-color: d8c4c8;">
         <columns>
           <TableColumn fx:id="FromColumn" prefWidth="117.5999755859375" text="From" />
             <TableColumn fx:id="StatusColumn" prefWidth="144.79999542236328" text="Status" />
             <TableColumn fx:id="DateColumn" prefWidth="168.0" text="Date" />
-          <TableColumn fx:id="ToColumn" prefWidth="156.0" text="To" />
+          <TableColumn fx:id="ToColumn" prefWidth="222.0" text="To" />
         </columns>
       </TableView>
    </children>
