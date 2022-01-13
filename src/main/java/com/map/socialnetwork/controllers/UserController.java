@@ -271,6 +271,7 @@ public class UserController implements Observer {
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Reports");
         stage.show();
 
         ReportsController reportsController = fxmlLoader.getController();
