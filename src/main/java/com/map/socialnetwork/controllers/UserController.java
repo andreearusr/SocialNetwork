@@ -1,9 +1,7 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
-import com.map.socialnetwork.domain.Event;
-import com.map.socialnetwork.domain.User;
-import com.map.socialnetwork.domain.UserPage;
+import com.map.socialnetwork.domain.*;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
@@ -55,11 +53,12 @@ public class UserController implements Observer {
     private Label loggedUser;
 
     public void setUserPage() {
-        userPage.setFirstName(myUser.getFirstName());
-        userPage.setLastName(myUser.getLastName());
-        userPage.setFriends(service.getFriends(myUser));
-        userPage.setFriendRequests(service.getAllFriendshipRequests(myUser.getId()));
-        userPage.setReceivedMessages(service.getReceivedMessages(myUser.getId()));
+        String firstName = myUser.getFirstName();
+        String lastName =myUser.getLastName();
+        List<User> friends = service.getFriends(myUser);
+        List<Friendship> friendRequests = service.getAllFriendshipRequests(myUser.getId());
+        List<Message> receivedMmessages = service.getReceivedMessages(myUser.getId());
+        userPage = new UserPage(firstName, lastName, friends, friendRequests, receivedMmessages);
     }
 
 
@@ -75,7 +74,8 @@ public class UserController implements Observer {
         }
 
         this.myUser = user.get();
-        loggedUser.setText(myUser.toString());
+        setUserPage();
+        loggedUser.setText("Welcome to Go SOcial, \n" + userPage.getFirstName() + " " + userPage.getLastName());
         initModel();
     }
 
@@ -186,7 +186,7 @@ public class UserController implements Observer {
 
         Stage dialogStage = new Stage();
 
-        dialogStage.setTitle("Friendship requests");
+        dialogStage.setTitle("Friend requests");
         dialogStage.setScene(scene);
         dialogStage.setResizable(false);
 
@@ -202,7 +202,7 @@ public class UserController implements Observer {
         authenticator.logOut();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Meta");
+        primaryStage.setTitle("Go SOcial");
         primaryStage.setScene(scene);
 
         LoginController loginController = fxmlLoader.getController();
@@ -217,6 +217,7 @@ public class UserController implements Observer {
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Respond to friend request");
         stage.show();
 
         RespondToFriendRequestController respondToFriendRequestController = fxmlLoader.getController();
@@ -230,6 +231,7 @@ public class UserController implements Observer {
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Retract friend request");
         stage.show();
 
         RetractRequestController retractRequestController = fxmlLoader.getController();
@@ -256,6 +258,7 @@ public class UserController implements Observer {
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Send a message");
         stage.show();
 
         MessageSenderController messageSenderController = fxmlLoader.getController();
@@ -269,6 +272,7 @@ public class UserController implements Observer {
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Reports");
         stage.show();
 
         ReportsController reportsController = fxmlLoader.getController();
@@ -282,7 +286,7 @@ public class UserController implements Observer {
             User user = service.getUser(friendsTable.getSelectionModel().getSelectedItem().getId()).get();
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("userPage.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
-            primaryStage.setTitle("Meta");
+            primaryStage.setTitle("Go SOcial");
             primaryStage.setScene(scene);
 
             UserPageController userPageController = fxmlLoader.getController();

@@ -117,6 +117,7 @@ public class MessageSenderController implements Observer {
             service.sendSingleMessage(inputText.getText(), usersTable.getSelectionModel().getSelectedItems().stream()
                     .map(Entity::getId)
                     .collect(Collectors.toList()), myUser.getId());
+            inputText.clear();
         } catch (ValidatorException | DuplicateEntityException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
             e.printStackTrace();

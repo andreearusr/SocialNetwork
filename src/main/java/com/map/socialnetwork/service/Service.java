@@ -39,7 +39,7 @@ public class Service extends Observable {
     }
 
     public long getLastUserAdded() {
-        return  userDBRepository.getLastUserAdded();
+        return userDBRepository.getLastUserAdded();
     }
 
     public void deleteUser(long id) throws MissingEntityException {
@@ -313,7 +313,7 @@ public class Service extends Observable {
         saveTextToPdf(body.toString());
     }
 
-    public List<Event> getEventsUserSubscriber(long id){
+    public List<Event> getEventsUserSubscriber(long id) {
         return eventDBRepository.getEventsUserSubscriber(id);
     }
 
@@ -322,6 +322,9 @@ public class Service extends Observable {
         List<Friendship> friendships = friendshipDBRepository.getActivity(user, start, end);
 
         StringBuilder body = new StringBuilder();
+
+        body.append("User:").append(user.toString());
+        body.append("\n");
 
         for (Message message : messages) {
             body.append("New message from: ").append(message.getFrom().getFullName()).append("\nContent: \n\"")
@@ -374,7 +377,15 @@ public class Service extends Observable {
         contentStream.endText();
         contentStream.close();
 
-        document.save("report-" + LocalDateTime.now() + ".pdf");
+        document.save("report-"
+                + LocalDateTime.now().getDayOfMonth() + "-"
+                + LocalDateTime.now().getMonth() + "-"
+                + LocalDateTime.now().getYear() + "-"
+
+                + LocalDateTime.now().getHour() + "_"
+                + LocalDateTime.now().getMinute() + "_"
+                + LocalDateTime.now().getSecond() +
+                ".pdf");
         document.close();
     }
 }
