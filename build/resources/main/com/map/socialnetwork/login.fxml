@@ -1,11 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="347.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.LoginController">
-    <Button fx:id="loginButton" layoutX="38.0" layoutY="233.0" mnemonicParsing="false" onAction="#userLogin" prefHeight="42.0" prefWidth="272.0" text="Login" />
-    <TextField fx:id="inputUsername" layoutX="38.0" layoutY="39.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="42.0" prefWidth="272.0" promptText="username" />
-    <PasswordField fx:id="inputPassword" layoutX="38.0" layoutY="118.0" prefHeight="48.0" prefWidth="272.0" promptText="password" />
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="393.0" prefWidth="580.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.LoginController">
+   <SplitPane dividerPositions="0.41355463347164584" layoutX="-1.0" layoutY="1.0" prefHeight="392.0" prefWidth="580.0">
+     <items>
+       <AnchorPane minHeight="0.0" minWidth="0.0" opacity="0.61" prefHeight="225.0" prefWidth="256.0" style="-fx-background-color: coral;">
+            <children>
+               <Circle fill="#dfff1f" layoutX="78.0" layoutY="150.0" radius="3.0" stroke="BLACK" strokeType="INSIDE" />
+               <Circle fill="#d7ff1f" layoutX="69.0" layoutY="166.0" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
+               <Circle fill="#e7ff1f" layoutX="159.0" layoutY="138.0" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
+               <Circle fill="#dfff1f" layoutX="150.0" layoutY="173.0" radius="3.0" stroke="BLACK" strokeType="INSIDE" />
+               <Circle fill="#ebff1f" layoutX="168.0" layoutY="144.0" radius="3.0" stroke="BLACK" strokeType="INSIDE" />
+               <Label layoutX="50.0" layoutY="195.0" prefHeight="74.0" prefWidth="139.0" text="Your connections with other people are important" textAlignment="CENTER" wrapText="true">
+                  <font>
+                     <Font name="Cambria" size="14.0" />
+                  </font>
+               </Label>
+               <ImageView fitHeight="63.0" fitWidth="63.0" layoutX="89.0" layoutY="100.0">
+                  <image>
+                     <Image url="@images/people.png" />
+                  </image>
+               </ImageView>
+            </children>
+         </AnchorPane>
+       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="390.0" prefWidth="307.0">
+            <children>
+                <TextField fx:id="inputUsername" layoutX="62.0" layoutY="55.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="42.0" prefWidth="212.0" promptText="Username" />
+                <PasswordField fx:id="inputPassword" layoutX="62.0" layoutY="129.0" prefHeight="48.0" prefWidth="212.0" promptText="Password" />
+                <Button fx:id="loginButton" layoutX="110.0" layoutY="225.0" mnemonicParsing="false" onAction="#userLogin" opacity="0.75" prefHeight="31.0" prefWidth="116.0" style="-fx-background-color: coral;" text="Login" />
+               <Label layoutX="123.0" layoutY="311.0" onMouseClicked="#handleRegister" prefHeight="20.0" prefWidth="90.0" text="Register now!" textFill="#1b30d4">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+               </Label>
+               <Label layoutX="62.0" layoutY="36.0" prefHeight="18.0" prefWidth="78.0" text="Username" />
+               <Label layoutX="62.0" layoutY="111.0" prefHeight="18.0" prefWidth="78.0" text="Password" />
+            </children>
+         </AnchorPane>
+     </items>
+   </SplitPane>
 </AnchorPane>

@@ -78,10 +78,12 @@ public class RegisterController {
         try {
             service.addUser(firstName, lastName);
             long id = service.getLastUserAdded();
-            if (id != 0L)
+            if (id != 0L) {
                 authenticator.addCredentials(id, username, password);
-            else
+            }
+            else {
                 MessageAlert.showErrorMessage(null, "User id not found");
+            }
         } catch (ValidatorException | DuplicateEntityException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
         }

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane prefHeight="465.0" prefWidth="642.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ReportsController">
+<AnchorPane prefHeight="465.0" prefWidth="642.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ReportsController">
    <children>
       <TableView fx:id="usersTable" layoutX="14.0" layoutY="14.0" prefHeight="437.0" prefWidth="308.0">
         <columns>
