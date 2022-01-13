@@ -231,6 +231,7 @@ public class UserController implements Observer {
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Retract friend request");
         stage.show();
 
         RetractRequestController retractRequestController = fxmlLoader.getController();
