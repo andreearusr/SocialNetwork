@@ -1,9 +1,7 @@
 package com.map.socialnetwork.controllers;
 
 import com.map.socialnetwork.Main;
-import com.map.socialnetwork.domain.Event;
-import com.map.socialnetwork.domain.User;
-import com.map.socialnetwork.domain.UserPage;
+import com.map.socialnetwork.domain.*;
 import com.map.socialnetwork.exceptions.AuthenticationException;
 import com.map.socialnetwork.exceptions.MissingEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
@@ -55,11 +53,12 @@ public class UserController implements Observer {
     private Label loggedUser;
 
     public void setUserPage() {
-        userPage.setFirstName(myUser.getFirstName());
-        userPage.setLastName(myUser.getLastName());
-        userPage.setFriends(service.getFriends(myUser));
-        userPage.setFriendRequests(service.getAllFriendshipRequests(myUser.getId()));
-        userPage.setReceivedMessages(service.getReceivedMessages(myUser.getId()));
+        String firstName = myUser.getFirstName();
+        String lastName =myUser.getLastName();
+        List<User> friends = service.getFriends(myUser);
+        List<Friendship> friendRequests = service.getAllFriendshipRequests(myUser.getId());
+        List<Message> receivedMmessages = service.getReceivedMessages(myUser.getId());
+        userPage = new UserPage(firstName, lastName, friends, friendRequests, receivedMmessages);
     }
 
 
@@ -75,7 +74,8 @@ public class UserController implements Observer {
         }
 
         this.myUser = user.get();
-        loggedUser.setText(myUser.toString());
+        setUserPage();
+        loggedUser.setText("Welcome to Go SOcial, \n" + userPage.getFirstName() + " " + userPage.getLastName());
         initModel();
     }
 
