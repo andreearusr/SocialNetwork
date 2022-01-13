@@ -9,7 +9,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<<<<<<< HEAD
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" opacity="0.88" prefHeight="605.0" prefWidth="783.0" style="-fx-background-color: #D8BFD8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserController">
+=======
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="557.0" prefWidth="829.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserController">
+>>>>>>> 8692a0675534429374119c5a059303a03bf9f104
    <children>
       <Label fx:id="loggedUser" alignment="CENTER" layoutX="318.0" layoutY="32.0" prefHeight="51.0" prefWidth="224.0">
          <font>
@@ -25,6 +29,7 @@
             <TableColumn fx:id="LastNameColumn" prefWidth="200.79998779296875" text="Last Name" />
         </columns>
       </TableView>
+<<<<<<< HEAD
       <Button layoutX="555.0" layoutY="303.0" mnemonicParsing="false" onAction="#handleRespondToFriendRequest" prefHeight="32.0" prefWidth="198.0" style="-fx-background-color: #F5F5F5;" text="Respond to friend request" />
       <Button layoutX="555.0" layoutY="351.0" mnemonicParsing="false" onAction="#handleRetractFriendRequest" prefHeight="32.0" prefWidth="198.0" style="-fx-background-color: #F5F5F5;" text="Retract friend request" />
       <Button layoutX="555.0" layoutY="408.0" mnemonicParsing="false" onAction="#handleConversations" prefHeight="32.0" prefWidth="198.0" style="-fx-background-color: #DCDCDC;" text="Conversations" />
@@ -55,5 +60,14 @@
             <Font name="Mistral" size="23.0" />
          </font>
       </Label>
+=======
+      <Button layoutY="210.0" mnemonicParsing="false" onAction="#handleRespondToFriendRequest" prefHeight="70.0" prefWidth="262.0" text="Respond to friend request" />
+      <Button layoutY="280.0" mnemonicParsing="false" onAction="#handleRetractFriendRequest" prefHeight="70.0" prefWidth="262.0" text="Retract friend request" />
+      <Button layoutY="347.0" mnemonicParsing="false" onAction="#handleConversations" prefHeight="70.0" prefWidth="262.0" text="Conversations" />
+      <Button layoutY="417.0" mnemonicParsing="false" onAction="#handleSendMessage" prefHeight="70.0" prefWidth="262.0" text="Send message" />
+      <Button layoutY="487.0" mnemonicParsing="false" onAction="#handleReports" prefHeight="70.0" prefWidth="262.0" text="Reports" />
+      <Button layoutX="312.0" layoutY="433.0" mnemonicParsing="false" onAction="#handleUserPage" prefHeight="38.0" prefWidth="130.0" style="-fx-background-color: coral;" text="See user page" />
+      <Button layoutX="262.0" layoutY="487.0" mnemonicParsing="false" onAction="#handleAddEvent" prefHeight="70.0" prefWidth="262.0" text="Add event" />
+>>>>>>> 8692a0675534429374119c5a059303a03bf9f104
    </children>
 </AnchorPane>

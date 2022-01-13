@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<<<<<<< HEAD
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -55,5 +56,34 @@
             <Font name="Mistral" size="23.0" />
          </font>
       </Label>
+=======
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane prefHeight="512.0" prefWidth="763.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserPageController">
+   <children>
+      <TableView fx:id="friendsTable" layoutX="335.0" layoutY="3.0" prefHeight="506.0" prefWidth="428.0">
+        <columns>
+          <TableColumn fx:id="FirstNameColumn" prefWidth="229.5999755859375" text="FirstName" />
+          <TableColumn fx:id="LastNameColumn" prefWidth="197.60000610351562" text="LastName" />
+        </columns>
+      </TableView>
+      <Label fx:id="userName" layoutX="22.0" layoutY="32.0" prefHeight="26.0" prefWidth="136.0" textAlignment="CENTER" />
+      <Button layoutX="196.0" layoutY="470.0" mnemonicParsing="false" onAction="#handleClose" text="Close" />
+      <Circle fill="#efd866" layoutX="35.0" layoutY="72.0" radius="13.0" stroke="BLACK" strokeType="INSIDE">
+         <effect>
+            <Reflection fraction="0.68" topOpacity="0.57" />
+         </effect>
+      </Circle>
+      <Label fx:id="eventDetails" layoutX="14.0" layoutY="310.0" prefHeight="90.0" prefWidth="200.0" />
+      <Button layoutX="14.0" layoutY="416.0" mnemonicParsing="false" onAction="#handleParticipate" prefHeight="26.0" prefWidth="98.0" text="Participate" />
+      <Button layoutX="14.0" layoutY="443.0" mnemonicParsing="false" onAction="#handleUnsubscribe" prefHeight="26.0" prefWidth="98.0" text="Unsubscribe" />
+      <TableView fx:id="eventsTable" layoutX="12.0" layoutY="139.0" onMouseClicked="#handleSelectionEvent" prefHeight="161.0" prefWidth="200.0">
+        <columns>
+          <TableColumn fx:id="EventNameColumn" minWidth="0.0" prefWidth="199.19998931884766" text="EventName" />
+        </columns>
+      </TableView>
+>>>>>>> 8692a0675534429374119c5a059303a03bf9f104
    </children>
 </AnchorPane>

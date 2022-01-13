@@ -10,7 +10,12 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<<<<<<< HEAD
 <AnchorPane opacity="0.86" prefHeight="436.0" prefWidth="599.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ReportsController">
+=======
+
+<AnchorPane prefHeight="465.0" prefWidth="642.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ReportsController">
+>>>>>>> 8692a0675534429374119c5a059303a03bf9f104
    <children>
       <TableView fx:id="usersTable" blendMode="MULTIPLY" layoutX="14.0" layoutY="181.0" prefHeight="242.0" prefWidth="308.0">
         <columns>
