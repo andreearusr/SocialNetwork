@@ -33,7 +33,7 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" layoutX="255.0" layoutY="320.0" prefHeight="51.0" prefWidth="112.0" text="Find a context Send me a text" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+      <Label alignment="CENTER" layoutX="253.0" layoutY="317.0" prefHeight="51.0" prefWidth="120.0" text="Find a pretext Send me a text" textAlignment="CENTER" textFill="WHITE" wrapText="true">
          <font>
             <Font size="15.0" />
          </font>
