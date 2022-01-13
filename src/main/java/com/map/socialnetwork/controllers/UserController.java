@@ -258,6 +258,7 @@ public class UserController implements Observer {
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Send a message");
         stage.show();
 
         MessageSenderController messageSenderController = fxmlLoader.getController();
