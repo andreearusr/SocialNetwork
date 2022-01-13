@@ -98,9 +98,12 @@ public class AddFriendController implements Observer {
 
         try {
             service.sendFriendRequest(myUser.getId(), user.getId());
+        } catch (NullPointerException nullPointerException) {
+            MessageAlert.showErrorMessage(null, "Please select a user first!");
         } catch (Exception e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
         }
+
 
         initModel();
     }
