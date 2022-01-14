@@ -1,25 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="693.0" prefWidth="1415.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ConversationsController">
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="581.0" prefWidth="1090.0" style="-fx-background-color: #EBDDE2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ConversationsController">
    <children>
-      <TableView fx:id="usersTable" prefHeight="691.0" prefWidth="200.0">
+      <TableView fx:id="usersTable" layoutX="14.0" layoutY="67.0" opacity="0.74" prefHeight="504.0" prefWidth="164.0" style="-fx-background-color: #EBDDE2;">
         <columns>
-          <TableColumn fx:id="user" prefWidth="199.0" text="User" />
+          <TableColumn fx:id="user" prefWidth="163.19997787475586" text="User" />
         </columns>
       </TableView>
-      <TableView fx:id="messages" layoutX="200.0" prefHeight="650.0" prefWidth="1216.0">
+      <TableView fx:id="messages" layoutX="184.0" layoutY="67.0" opacity="0.7" prefHeight="304.0" prefWidth="884.0" style="-fx-background-color: #EBDDE2;">
         <columns>
-          <TableColumn fx:id="from" prefWidth="198.0" text="FROM" />
-          <TableColumn fx:id="to" prefWidth="173.0" text="TO" />
-            <TableColumn fx:id="time" prefWidth="182.0" text="TIME" />
-            <TableColumn fx:id="message" prefWidth="460.0" text="MESSAGE" />
-            <TableColumn fx:id="replyTo" prefWidth="202.0" text="ReplyTo" />
+          <TableColumn fx:id="from" prefWidth="143.99998474121094" text="FROM" />
+          <TableColumn fx:id="to" prefWidth="166.4000244140625" text="TO" />
+            <TableColumn fx:id="time" prefWidth="178.39996337890625" text="TIME" />
+            <TableColumn fx:id="message" minWidth="0.0" prefWidth="206.39996337890625" text="MESSAGE" />
+            <TableColumn fx:id="replyTo" prefWidth="184.79998779296875" text="ReplyTo" />
         </columns>
       </TableView>
-      <TextField fx:id="inputMessage" layoutX="286.0" layoutY="649.0" prefHeight="44.0" prefWidth="1059.0" />
-      <CheckBox fx:id="replyAll" layoutX="200.0" layoutY="649.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="86.0" text="ReplyAll" />
-      <Button layoutX="1345.0" layoutY="649.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="44.0" prefWidth="71.0" text="Send" />
+      <TextField fx:id="inputMessage" layoutX="381.0" layoutY="422.0" prefHeight="44.0" prefWidth="453.0" />
+      <CheckBox fx:id="replyAll" layoutX="381.0" layoutY="494.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="102.0" text="ReplyAll" />
+      <Button blendMode="MULTIPLY" layoutX="877.0" layoutY="425.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="37.0" prefWidth="148.0" text="⇑        Send ">
+         <font>
+            <Font size="16.0" />
+         </font></Button>
+      <ImageView fitHeight="111.0" fitWidth="118.0" layoutX="184.0" layoutY="383.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/groupCh.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="505.0" layoutY="24.0" prefHeight="26.0" prefWidth="80.0" text="Messages:">
+         <font>
+            <Font name="System Bold Italic" size="16.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="290.0" layoutY="409.0" prefHeight="126.0" prefWidth="96.0" rotate="32.5" text="⤳" textFill="#009c91b0">
+         <font>
+            <Font size="86.0" />
+         </font>
+      </Label>
+      <Label layoutX="37.0" layoutY="23.0" prefHeight="28.0" prefWidth="281.0" text="Conversation is FOOD for the soul">
+         <font>
+            <Font name="Tempus Sans ITC" size="19.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

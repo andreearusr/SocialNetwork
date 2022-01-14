@@ -57,8 +57,8 @@ public class UserController implements Observer {
         String lastName =myUser.getLastName();
         List<User> friends = service.getFriends(myUser);
         List<Friendship> friendRequests = service.getAllFriendshipRequests(myUser.getId());
-        List<Message> receivedMmessages = service.getReceivedMessages(myUser.getId());
-        userPage = new UserPage(firstName, lastName, friends, friendRequests, receivedMmessages);
+        List<Message> receivedMessages = service.getReceivedMessages(myUser.getId());
+        userPage = new UserPage(firstName, lastName, friends, friendRequests, receivedMessages);
     }
 
 
@@ -245,6 +245,7 @@ public class UserController implements Observer {
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setTitle("Conversations");
         stage.show();
 
         ConversationsController conversationsController = fxmlLoader.getController();

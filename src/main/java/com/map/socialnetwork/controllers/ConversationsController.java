@@ -98,7 +98,7 @@ public class ConversationsController implements Observer {
         from.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFrom().getFullName()));
         to.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTo()
                 .stream().map(User::getFullName).collect(Collectors.joining(", "))));
-        time.setCellValueFactory(new PropertyValueFactory<>("time"));
+        time.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
         message.setCellValueFactory(new PropertyValueFactory<>("message"));
         replyTo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getReply() == null
                 ? "" : cellData.getValue().getReply().getMessage()));
