@@ -94,8 +94,8 @@ public class ReportsController implements Observer {
     }
 
     private void initModel() {
-        firstLoadedPage = service.getUsers(new PageableImpl<>(1, 20));
-        secondLoadedPage = service.getUsers(new PageableImpl<>(2, 20));
+        firstLoadedPage = service.getUsers(new PageableImpl<>(1, 8));
+        secondLoadedPage = service.getUsers(new PageableImpl<>(2, 8));
 
         setModel();
     }

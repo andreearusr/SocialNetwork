@@ -9,10 +9,10 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane opacity="0.9" prefHeight="449.0" prefWidth="625.0" style="-fx-background-color: #D8BFD8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.MessageSenderController">
+<AnchorPane opacity="0.9" prefHeight="449.0" prefWidth="625.0" style="-fx-background-color: #EBDDE2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.MessageSenderController">
    <children>
       <TextField fx:id="inputText" layoutX="76.0" layoutY="380.0" prefHeight="38.0" prefWidth="470.0" />
-      <TableView fx:id="usersTable" blendMode="DARKEN" layoutX="34.0" layoutY="63.0" prefHeight="223.0" prefWidth="555.0">
+      <TableView fx:id="usersTable" blendMode="MULTIPLY" layoutX="34.0" layoutY="63.0" prefHeight="223.0" prefWidth="555.0">
         <columns>
           <TableColumn fx:id="firstName" editable="false" prefWidth="276.79997539520264" text="First Name" />
           <TableColumn fx:id="lastName" editable="false" prefWidth="278.4000244140625" text="Last Name" />
@@ -20,22 +20,22 @@
       </TableView>
       <ImageView fitHeight="38.0" fitWidth="38.0" layoutX="563.0" layoutY="380.0" onMouseClicked="#sendMessage" opacity="0.8" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/send.png" />
+            <Image url="@images/sendM.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="51.0" fitWidth="147.0" layoutX="76.0" layoutY="317.0" opacity="0.82" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/message.png" />
+            <Image url="@images/messageM.png" />
          </image>
       </ImageView>
       <Label layoutX="292.0" layoutY="34.0" text="Users:">
          <font>
-            <Font size="15.0" />
+            <Font name="System Bold Italic" size="15.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" layoutX="253.0" layoutY="317.0" prefHeight="51.0" prefWidth="120.0" text="Find a pretext Send me a text" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+      <Label alignment="CENTER" layoutX="253.0" layoutY="317.0" prefHeight="51.0" prefWidth="120.0" text="Find a pretext Send me a text" textAlignment="CENTER" wrapText="true">
          <font>
-            <Font size="15.0" />
+            <Font name="Tempus Sans ITC" size="17.0" />
          </font>
       </Label>
    </children>

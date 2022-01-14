@@ -180,8 +180,8 @@ public class ConversationsController implements Observer {
     }
 
     private void initUsers() {
-        firstLoadedUsersPage = service.getUsers(new PageableImpl<>(1, 20));
-        secondLoadedUsersPage = service.getUsers(new PageableImpl<>(2, 20));
+        firstLoadedUsersPage = service.getUsers(new PageableImpl<>(1, 19));
+        secondLoadedUsersPage = service.getUsers(new PageableImpl<>(2, 19));
 
         setUsersModel();
     }
@@ -196,9 +196,9 @@ public class ConversationsController implements Observer {
     private void initMessages() {
         try {
             if (!selectedUser.isEmpty()) {
-                firstLoadedMessagesPage = service.getConversation(new PageableImpl<>(1, 20),
+                firstLoadedMessagesPage = service.getConversation(new PageableImpl<>(1, 11),
                         myUser.getId(), selectedUser.get(0).getId());
-                secondLoadedMessagesPage = service.getConversation(new PageableImpl<>(2, 20),
+                secondLoadedMessagesPage = service.getConversation(new PageableImpl<>(2, 11),
                         myUser.getId(), selectedUser.get(0).getId());
                 setMessagesModel();
             }

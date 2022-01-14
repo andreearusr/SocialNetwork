@@ -9,19 +9,19 @@
 
 <AnchorPane prefHeight="453.0" prefWidth="419.0" style="-fx-background-color: #C9DFEC;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.RetractRequestController">
    <children>
-      <TableView fx:id="requests" layoutX="14.0" layoutY="67.0" opacity="0.81" prefHeight="208.0" prefWidth="393.0">
+      <TableView fx:id="requests" layoutX="14.0" layoutY="67.0" opacity="0.81" prefHeight="208.0" prefWidth="393.0" style="-fx-background-color: #C9DFEC;">
         <columns>
           <TableColumn fx:id="to" prefWidth="198.39995193481445" text="TO" />
           <TableColumn fx:id="date" prefWidth="220.800048828125" text="DATE" />
         </columns>
       </TableView>
-      <Button layoutX="12.0" layoutY="403.0" mnemonicParsing="false" onAction="#retractFriendRequest" opacity="0.74" prefHeight="35.0" prefWidth="394.0" text="Cancel request">
+      <Button blendMode="MULTIPLY" layoutX="12.0" layoutY="403.0" mnemonicParsing="false" onAction="#retractFriendRequest" opacity="0.74" prefHeight="35.0" prefWidth="394.0" text="Cancel request">
          <font>
             <Font size="13.0" />
          </font></Button>
       <Label layoutX="151.0" layoutY="30.0" prefHeight="26.0" prefWidth="119.0" text="Sent requests:">
          <font>
-            <Font size="16.0" />
+            <Font name="System Bold Italic" size="16.0" />
          </font>
       </Label>
       <Label alignment="CENTER" layoutX="99.0" layoutY="297.0" prefHeight="90.0" prefWidth="222.0" text="Sorry I had to cancel the friend request I accidentally sent while I was stalking your profile " textAlignment="CENTER" textFill="#322bff" wrapText="true">

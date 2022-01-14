@@ -93,8 +93,8 @@ public class FriendshipRequestsController implements Observer {
     }
 
     private void initModel() {
-        firstLoadedPage = service.getAllFriendshipRequests(new PageableImpl<>(1, 20), myUser.getId());
-        secondLoadedPage = service.getAllFriendshipRequests(new PageableImpl<>(2, 20), myUser.getId());
+        firstLoadedPage = service.getAllFriendshipRequests(new PageableImpl<>(1, 10), myUser.getId());
+        secondLoadedPage = service.getAllFriendshipRequests(new PageableImpl<>(2, 10), myUser.getId());
 
         setModel();
     }

@@ -86,8 +86,8 @@ public class RetractRequestController implements Observer {
     }
 
     private void initModel() {
-        firstLoadedPage = service.getSentPendingRequests(new PageableImpl<>(1, 20), myUser);
-        secondLoadedPage = service.getSentPendingRequests(new PageableImpl<>(2, 20), myUser);
+        firstLoadedPage = service.getSentPendingRequests(new PageableImpl<>(1, 7), myUser);
+        secondLoadedPage = service.getSentPendingRequests(new PageableImpl<>(2, 7), myUser);
 
         setModel();
     }

@@ -12,7 +12,7 @@
 
 <AnchorPane opacity="0.86" prefHeight="436.0" prefWidth="599.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ReportsController">
    <children>
-      <TableView fx:id="usersTable" blendMode="MULTIPLY" layoutX="14.0" layoutY="181.0" prefHeight="242.0" prefWidth="308.0">
+      <TableView fx:id="usersTable" blendMode="MULTIPLY" layoutX="14.0" layoutY="181.0" prefHeight="227.0" prefWidth="308.0">
         <columns>
           <TableColumn fx:id="firstName" prefWidth="154.0" text="First Name" />
           <TableColumn fx:id="lastName" prefWidth="153.0" text="Last Name" />
@@ -31,7 +31,7 @@
       </ImageView>
       <Label alignment="CENTER" layoutX="263.0" layoutY="14.0" prefHeight="26.0" prefWidth="72.0" text="Reports:">
          <font>
-            <Font size="16.0" />
+            <Font name="System Bold Italic" size="16.0" />
          </font>
       </Label>
       <Label layoutX="145.0" layoutY="149.0" prefHeight="20.0" prefWidth="47.0" text="Users:">

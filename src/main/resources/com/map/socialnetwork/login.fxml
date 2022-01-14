@@ -48,7 +48,7 @@
                 <TextField fx:id="inputUsername" layoutX="112.0" layoutY="151.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="31.0" prefWidth="177.0" promptText="Username" />
                 <PasswordField fx:id="inputPassword" layoutX="111.0" layoutY="213.0" prefHeight="31.0" prefWidth="178.0" promptText="Password" />
                 <Button fx:id="loginButton" layoutX="152.0" layoutY="279.0" mnemonicParsing="false" onAction="#userLogin" prefHeight="31.0" prefWidth="98.0" style="-fx-background-color: #D8BFD8;" text="Login" />
-               <Label layoutX="150.0" layoutY="329.0" onMouseClicked="#handleRegister" prefHeight="20.0" prefWidth="108.0" text="Register now!" textFill="#1b30d4">
+               <Label alignment="CENTER" layoutX="147.0" layoutY="321.0" onMouseClicked="#handleRegister" prefHeight="20.0" prefWidth="108.0" text="Register now!" textFill="#1b30d4">
                   <font>
                      <Font size="14.0" />
                   </font>

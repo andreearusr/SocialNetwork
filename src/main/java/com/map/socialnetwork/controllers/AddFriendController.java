@@ -81,8 +81,8 @@ public class AddFriendController implements Observer {
     }
 
     private void initModel() {
-        firstLoadedPage = service.getUnrelatedUsers(new PageableImpl<>(1, 20), myUser);
-        secondLoadedPage = service.getUnrelatedUsers(new PageableImpl<>(2, 20), myUser);
+        firstLoadedPage = service.getUnrelatedUsers(new PageableImpl<>(1, 12), myUser);
+        secondLoadedPage = service.getUnrelatedUsers(new PageableImpl<>(2, 12), myUser);
         setModel();
     }
 

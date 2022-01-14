@@ -13,12 +13,12 @@
 
 <AnchorPane prefHeight="581.0" prefWidth="1090.0" style="-fx-background-color: #EBDDE2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.ConversationsController">
    <children>
-      <TableView fx:id="usersTable" layoutX="14.0" layoutY="67.0" opacity="0.74" prefHeight="504.0" prefWidth="164.0" style="-fx-background-color: #EBDDE2;">
+      <TableView fx:id="usersTable" layoutX="14.0" layoutY="67.0" opacity="0.74" prefHeight="493.0" prefWidth="164.0" style="-fx-background-color: #EBDDE2;">
         <columns>
           <TableColumn fx:id="user" prefWidth="163.19997787475586" text="User" />
         </columns>
       </TableView>
-      <TableView fx:id="messages" layoutX="184.0" layoutY="67.0" opacity="0.7" prefHeight="304.0" prefWidth="884.0" style="-fx-background-color: #EBDDE2;">
+      <TableView fx:id="messages" layoutX="184.0" layoutY="67.0" opacity="0.7" prefHeight="289.0" prefWidth="884.0" style="-fx-background-color: #EBDDE2;">
         <columns>
           <TableColumn fx:id="from" prefWidth="143.99998474121094" text="FROM" />
           <TableColumn fx:id="to" prefWidth="166.4000244140625" text="TO" />

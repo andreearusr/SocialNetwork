@@ -88,8 +88,8 @@ public class RespondToFriendRequestController implements Observer {
     }
 
     private void initModel() {
-        firstLoadedPage = service.getReceivedRequests(new PageableImpl<>(1, 20), myUser);
-        secondLoadedPage = service.getReceivedRequests(new PageableImpl<>(2, 20), myUser);
+        firstLoadedPage = service.getReceivedRequests(new PageableImpl<>(1, 10), myUser);
+        secondLoadedPage = service.getReceivedRequests(new PageableImpl<>(2, 10), myUser);
 
         setModel();
     }

@@ -11,7 +11,7 @@
 
 <AnchorPane prefHeight="492.0" prefWidth="724.0" style="-fx-background-color: #D8BFD8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.map.socialnetwork.controllers.UserPageController">
    <children>
-      <TableView fx:id="friendsTable" blendMode="COLOR_BURN" layoutX="398.0" layoutY="58.0" prefHeight="309.0" prefWidth="306.0" style="-fx-background-color: grey;">
+      <TableView fx:id="friendsTable" blendMode="MULTIPLY" layoutX="398.0" layoutY="58.0" opacity="0.7" prefHeight="299.0" prefWidth="306.0" style="-fx-background-color: #D8BFD8;">
         <columns>
           <TableColumn fx:id="FirstNameColumn" prefWidth="152.80001831054688" resizable="false" text="FirstName" />
           <TableColumn fx:id="LastNameColumn" prefWidth="153.59991455078125" resizable="false" text="LastName" />
@@ -20,7 +20,7 @@
       <Label fx:id="userName" alignment="CENTER" layoutX="66.0" layoutY="83.0" prefHeight="26.0" prefWidth="136.0" textAlignment="CENTER" />
       <Button blendMode="HARD_LIGHT" layoutX="501.0" layoutY="422.0" mnemonicParsing="false" onAction="#handleClose" prefHeight="26.0" prefWidth="99.0" text="Close page" />
       <Label fx:id="eventDetails" layoutX="35.0" layoutY="354.0" prefHeight="71.0" prefWidth="200.0" />
-      <TableView fx:id="eventsTable" blendMode="COLOR_BURN" layoutX="34.0" layoutY="213.0" onMouseClicked="#handleSelectionEvent" prefHeight="135.0" prefWidth="200.0" style="-fx-background-color: grey;">
+      <TableView fx:id="eventsTable" blendMode="MULTIPLY" layoutX="34.0" layoutY="213.0" onMouseClicked="#handleSelectionEvent" opacity="0.7" prefHeight="135.0" prefWidth="200.0" style="-fx-background-color: #D8BFD8;">
         <columns>
           <TableColumn fx:id="EventNameColumn" minWidth="0.0" prefWidth="209.59998931884766" text="EventName" />
         </columns>
@@ -40,12 +40,12 @@
             <Font name="Copperplate Gothic Bold" size="16.0" />
          </font>
       </Label>
-      <Label layoutX="146.0" layoutY="425.0" onMouseClicked="#handleUnsubscribe" text="Unsubscribe" textFill="#0015ff">
+      <Label layoutX="146.0" layoutY="425.0" onMouseClicked="#handleUnsubscribe" text="Unsubscribe">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Label layoutX="35.0" layoutY="425.0" onMouseClicked="#handleParticipate" text="Participate" textFill="#140bc1">
+      <Label layoutX="35.0" layoutY="425.0" onMouseClicked="#handleParticipate" text="Participate" textFill="#bf0b7b">
          <font>
             <Font name="System Bold Italic" size="16.0" />
          </font>

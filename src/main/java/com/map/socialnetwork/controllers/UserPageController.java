@@ -149,11 +149,11 @@ public class UserPageController implements Observer {
     }
 
     private void initModel() {
-        firstLoadedPage = service.getFriends(new PageableImpl<>(1, 20), myUser);
-        secondLoadedPage = service.getFriends(new PageableImpl<>(2, 20), myUser);
+        firstLoadedPage = service.getFriends(new PageableImpl<>(1, 11), myUser);
+        secondLoadedPage = service.getFriends(new PageableImpl<>(2, 11), myUser);
 
-        firstLoadedEvent = service.getAllEvents(new PageableImpl<>(1, 20), myUser.getId());
-        secondLoadedEvent = service.getAllEvents(new PageableImpl<>(2, 20), myUser.getId());
+        firstLoadedEvent = service.getAllEvents(new PageableImpl<>(1, 4), myUser.getId());
+        secondLoadedEvent = service.getAllEvents(new PageableImpl<>(2, 4), myUser.getId());
 
         setModel();
     }

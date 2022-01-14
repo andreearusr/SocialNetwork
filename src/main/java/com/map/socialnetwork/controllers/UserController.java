@@ -54,7 +54,7 @@ public class UserController implements Observer {
 
     public void setUserPage() {
         String firstName = myUser.getFirstName();
-        String lastName =myUser.getLastName();
+        String lastName = myUser.getLastName();
         List<User> friends = service.getFriends(myUser);
         List<Friendship> friendRequests = service.getAllFriendshipRequests(myUser.getId());
         List<Message> receivedMessages = service.getReceivedMessages(myUser.getId());
@@ -75,7 +75,7 @@ public class UserController implements Observer {
 
         this.myUser = user.get();
         setUserPage();
-        loggedUser.setText("Welcome to Go SOcial, \n" + userPage.getFirstName() + " " + userPage.getLastName());
+        loggedUser.setText("Welcome to Go SOcial, \n" + "\t" + userPage.getFirstName() + " " + userPage.getLastName() + "!");
         initModel();
     }
 
@@ -137,8 +137,8 @@ public class UserController implements Observer {
     }
 
     private void initModel() {
-        firstLoadedPage = service.getFriends(new PageableImpl<>(1, 20), myUser);
-        secondLoadedPage = service.getFriends(new PageableImpl<>(2, 20), myUser);
+        firstLoadedPage = service.getFriends(new PageableImpl<>(1, 9), myUser);
+        secondLoadedPage = service.getFriends(new PageableImpl<>(2, 9), myUser);
 
         setModel();
     }
