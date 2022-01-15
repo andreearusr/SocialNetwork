@@ -283,6 +283,10 @@ public class Service extends Observable {
         return eventDBRepository.getAll(id);
     }
 
+    public Page<Event> getAttendingEvents(Pageable<Event> pageable, long id) {
+        return eventDBRepository.getAttendingEvents(pageable, id);
+    }
+
     public void participateToEvent(Event event, long id) throws DuplicateEntityException {
         eventDBRepository.participateToEvent(event, id);
 

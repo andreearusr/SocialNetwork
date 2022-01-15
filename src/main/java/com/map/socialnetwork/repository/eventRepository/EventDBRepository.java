@@ -300,6 +300,34 @@ public class EventDBRepository extends AbstractRepository<Event> implements Even
         return eventsUser;
     }
 
+    public Page<Event> getAttendingEvents(Pageable<Event> pageable, long id) {
+
+        List<Event> events = new ArrayList<>();
+
+        String sql = """
+                SELECT event_name from users_events 
+                WHERE user_id=(?)
+                LIMIT (?) OFFSET(?)
+                """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            statement.setLong(2, pageable.getPageSize());
+            statement.setLong(3, (long) pageable.getPageSize() * (pageable.getPageNumber() - 1));
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                get(resultSet.getString("event_name")).ifPresent(events::add);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return new PageImpl<>(pageable, events);
+    }
+
 
 }
 

@@ -160,6 +160,7 @@ public class UserController implements Observer {
         stage.setScene(scene);
         stage.setTitle("Add Friends");
         stage.show();
+        stage.setResizable(false);
 
         AddFriendController addFriendController = fxmlLoader.getController();
         addFriendController.setUser(myUser);
@@ -219,6 +220,7 @@ public class UserController implements Observer {
         stage.setScene(scene);
         stage.setTitle("Respond to friend request");
         stage.show();
+        stage.setResizable(false);
 
         RespondToFriendRequestController respondToFriendRequestController = fxmlLoader.getController();
         respondToFriendRequestController.setUser(myUser);
@@ -233,6 +235,7 @@ public class UserController implements Observer {
         stage.setScene(scene);
         stage.setTitle("Retract friend request");
         stage.show();
+        stage.setResizable(false);
 
         RetractRequestController retractRequestController = fxmlLoader.getController();
         retractRequestController.setUser(myUser);
@@ -247,6 +250,7 @@ public class UserController implements Observer {
         stage.setScene(scene);
         stage.setTitle("Conversations");
         stage.show();
+        stage.setResizable(false);
 
         ConversationsController conversationsController = fxmlLoader.getController();
         conversationsController.setUser(myUser);
@@ -261,6 +265,7 @@ public class UserController implements Observer {
         stage.setScene(scene);
         stage.setTitle("Send a message");
         stage.show();
+        stage.setResizable(false);
 
         MessageSenderController messageSenderController = fxmlLoader.getController();
         messageSenderController.setUser(myUser);
@@ -275,6 +280,7 @@ public class UserController implements Observer {
         stage.setScene(scene);
         stage.setTitle("Reports");
         stage.show();
+        stage.setResizable(false);
 
         ReportsController reportsController = fxmlLoader.getController();
         reportsController.setUser(myUser);
@@ -289,6 +295,7 @@ public class UserController implements Observer {
             Scene scene = new Scene(fxmlLoader.load());
             primaryStage.setTitle("Go SOcial");
             primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
 
             UserPageController userPageController = fxmlLoader.getController();
             userPageController.setService(service);
@@ -310,10 +317,27 @@ public class UserController implements Observer {
         stage.setScene(scene);
         stage.setTitle("Add new event");
         stage.show();
+        stage.setResizable(false);
 
         AddEventController addEventController = fxmlLoader.getController();
         addEventController.setService(service);
         addEventController.setUser(myUser);
+
+    }
+
+    @FXML
+    private void handleMyEvents() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("myEvents.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.setTitle("Attending events");
+        stage.show();
+        stage.setResizable(false);
+
+        MyEventsController myEventsController = fxmlLoader.getController();
+        myEventsController.setService(service);
+        myEventsController.setUser(myUser);
 
     }
 }
