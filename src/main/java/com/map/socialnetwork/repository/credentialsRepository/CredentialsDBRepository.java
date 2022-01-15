@@ -2,6 +2,7 @@ package com.map.socialnetwork.repository.credentialsRepository;
 
 import com.map.socialnetwork.domain.Credentials;
 import com.map.socialnetwork.domain.validator.Validator;
+import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.repository.AbstractRepository;
 
@@ -55,8 +56,11 @@ public class CredentialsDBRepository extends AbstractRepository<Credentials> {
         return null;
     }
 
-    public void store(Long userId, Credentials credentials) throws ValidatorException {
+    public void store(Long userId, Credentials credentials) throws ValidatorException, DuplicateEntityException {
         validator.validate(credentials);
+        if (checkIfExistsUsername(credentials.getUsername()))
+            throw new DuplicateEntityException("This username already exists!");
+
         String sql = "insert into credentials (id, username, password) values (?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
@@ -71,6 +75,32 @@ public class CredentialsDBRepository extends AbstractRepository<Credentials> {
             e.printStackTrace();
         }
     }
+
+    public Boolean checkIfExistsUsername(String userName) {
+
+        String sql = """
+                SELECT * FROM credentials 
+                WHERE username=(?)
+                 """;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, userName);
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                String userN = resultSet.getString("username");
+                if(!userN.isEmpty())
+                    return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
     public void update(Long id, String newPassword) {
         String sql = "UPDATE credentials SET password = (?) WHERE id = (?)";

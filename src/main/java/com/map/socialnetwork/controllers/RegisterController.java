@@ -62,11 +62,14 @@ public class RegisterController {
         String confirmPassword = inputConfirmPassword.getText();
 
         if (password.equals(confirmPassword)) {
-            registerUser();
             labelWrongPassword.setText("");
-            labelRegistration.setText("User has been registred succesfully!");
-        } else
+            labelRegistration.setText("");
+            registerUser();
+
+        } else {
+            labelRegistration.setText("");
             labelWrongPassword.setText("Password does not match");
+        }
     }
 
     private void registerUser() {
@@ -76,13 +79,21 @@ public class RegisterController {
         String password = inputPassword.getText();
 
         try {
-            service.addUser(firstName, lastName);
-            long id = service.getLastUserAdded();
-            if (id != 0L) {
-                authenticator.addCredentials(id, username, password);
+            Boolean checkIfUsernameExists = authenticator.checkIfExistsUsername(username);
+            System.out.println(checkIfUsernameExists);
+            if(!checkIfUsernameExists) {
+                service.addUser(firstName, lastName);
+                long id = service.getLastUserAdded();
+                if (id != 0L) {
+                    authenticator.addCredentials(id, username, password);
+                } else {
+                    MessageAlert.showErrorMessage(null, "User id not found");
+                }
+                labelWrongPassword.setText("");
+                labelRegistration.setText("User has been registred succesfully!");
             }
             else {
-                MessageAlert.showErrorMessage(null, "User id not found");
+                MessageAlert.showErrorMessage(null, "This username already exists!");
             }
         } catch (ValidatorException | DuplicateEntityException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());

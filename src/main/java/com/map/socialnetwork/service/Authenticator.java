@@ -2,6 +2,7 @@ package com.map.socialnetwork.service;
 
 import com.map.socialnetwork.domain.Credentials;
 import com.map.socialnetwork.exceptions.AuthenticationException;
+import com.map.socialnetwork.exceptions.DuplicateEntityException;
 import com.map.socialnetwork.exceptions.ValidatorException;
 import com.map.socialnetwork.repository.credentialsRepository.CredentialsDBRepository;
 import com.map.socialnetwork.utils.Hashes;
@@ -48,8 +49,12 @@ public class Authenticator {
         userId = null;
     }
 
-    public void addCredentials(Long userId, String username, String password) throws ValidatorException {
+    public void addCredentials(Long userId, String username, String password) throws ValidatorException, DuplicateEntityException {
         credentialsDBRepository.store(userId, Credentials.of(username, password));
+    }
+
+    public Boolean checkIfExistsUsername(String userName){
+        return credentialsDBRepository.checkIfExistsUsername(userName);
     }
 
     public void changePassword(String newPassword) throws AuthenticationException {
